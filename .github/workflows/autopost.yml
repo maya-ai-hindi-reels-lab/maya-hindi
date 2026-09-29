@@ -44,7 +44,7 @@ jobs:
           ACTIVE_START: ${{ vars.ACTIVE_START }}
           ACTIVE_END: ${{ vars.ACTIVE_END }}
           MIN_GAP_HOURS: ${{ vars.MIN_GAP_HOURS }}
-          CAPTION_LANGUAGE: ${{ vars.CAPTION_LANGUAGE || 'Hindi in Devanagari, with a light Haryanvi touch' }}
+          CAPTION_LANGUAGE: ${{ vars.CAPTION_LANGUAGE || 'Hinglish - Hindi written in English (Roman) letters mixed with common English words, the way young Indians type on Instagram. Casual and catchy, no Devanagari script.' }}
           DEFAULT_CAPTION: ${{ vars.DEFAULT_CAPTION }}
           ALWAYS_HASHTAGS: ${{ vars.ALWAYS_HASHTAGS }}
           TREND_TOPIC: ${{ vars.TREND_TOPIC || 'Hindi and Haryanvi AI videos of talking objects, desi funny and tips reels' }}
