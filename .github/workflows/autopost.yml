@@ -1,0 +1,65 @@
+name: instagram-autopost
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"   # every 30 min (UTC); slots are handled in LOCAL_TZ
+  workflow_dispatch:
+    inputs:
+      post_now:
+        description: "Post the next dubbed video immediately (for testing)"
+        type: boolean
+        default: false
+
+concurrency:
+  group: autopost
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - run: pip install -r requirements.txt
+      - run: python main.py
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          GOOGLE_SA_JSON: ${{ secrets.GOOGLE_SA_JSON }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+          DRIVE_FOLDER_ID: ${{ vars.DUBBED_FOLDER_ID }}
+          POSTS_PER_DAY: ${{ vars.POSTS_PER_DAY || '3' }}
+          LOCAL_TZ: ${{ vars.LOCAL_TZ || 'Asia/Kolkata' }}
+          DEFAULT_SLOTS: ${{ vars.DEFAULT_SLOTS || '13:00,19:00,21:30' }}
+          ACTIVE_START: ${{ vars.ACTIVE_START }}
+          ACTIVE_END: ${{ vars.ACTIVE_END }}
+          MIN_GAP_HOURS: ${{ vars.MIN_GAP_HOURS }}
+          CAPTION_LANGUAGE: ${{ vars.CAPTION_LANGUAGE || 'Hindi in Devanagari, with a light Haryanvi touch' }}
+          DEFAULT_CAPTION: ${{ vars.DEFAULT_CAPTION }}
+          ALWAYS_HASHTAGS: ${{ vars.ALWAYS_HASHTAGS }}
+          TREND_TOPIC: ${{ vars.TREND_TOPIC || 'Hindi and Haryanvi AI videos of talking objects, desi funny and tips reels' }}
+          TREND_REGION: ${{ vars.TREND_REGION || 'India' }}
+          POST_NOW: ${{ inputs.post_now }}
+      - name: Save state (retries so a push conflict can't lose the posted list)
+        if: always()
+        run: |
+          git config user.name "autopost-bot"
+          git config user.email "autopost-bot@users.noreply.github.com"
+          git add state*.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "state: update"
+          for i in 1 2 3 4 5; do
+            git pull --rebase --autostash -X theirs origin main && git push && exit 0
+            echo "Push failed, retrying ($i/5)..."; sleep $((i * 5))
+          done
+          echo "::error::Could not save the state file"; exit 1

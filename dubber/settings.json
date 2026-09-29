@@ -1,0 +1,17 @@
+{
+  "TARGET_LANGUAGE_CODE": "bgc",
+  "HARYANVI_STYLE": "Hindi with light Haryanvi touch",
+  "TRANSLATION_STYLE": "Natural spoken",
+  "ECHO_TARGET_LANGUAGE": true,
+  "CONFIDENT_TONE": true,
+  "VIDEO_CONTEXT": "",
+  "WHISPER_MODEL": "medium",
+  "PAUSE_SPLIT": 0.35,
+  "USE_SILENCE": true,
+  "MAX_EARLY_START": 1.5,
+  "FIT_BY_REWRITING": true,
+  "PACE_TOLERANCE": 1.08,
+  "MUSIC_VOLUME": 0.25,
+  "DUCKING": true,
+  "GEMINI_MODEL": "gemini-3.5-flash"
+}

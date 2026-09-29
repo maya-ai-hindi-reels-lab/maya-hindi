@@ -1,0 +1,58 @@
+name: dub
+
+on:
+  schedule:
+    - cron: "30 19 * * *"   # daily at 01:00 India time
+  workflow_dispatch:
+    inputs:
+      count:
+        description: "How many videos to dub now (empty = automatic)"
+        required: false
+        default: ""
+
+concurrency:
+  group: dub
+  cancel-in-progress: false
+
+jobs:
+  dub:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install -q kaggle google-api-python-client google-auth
+      - name: Check the previous dubbing run
+        id: prev
+        env:
+          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+          KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+        run: python dubber/kaggle_status.py
+      - name: Decide how many to dub (keeps a buffer of ready videos)
+        id: count
+        env:
+          GOOGLE_SA_JSON: ${{ secrets.GOOGLE_SA_JSON }}
+          HI_DRIVE_FOLDER_ID: ${{ vars.DUBBED_FOLDER_ID }}
+          HI_BUFFER: ${{ vars.BUFFER }}
+          HI_MAX_PER_RUN: ${{ vars.MAX_PER_RUN }}
+          STATE_FILE: state.json
+          COUNT_INPUT: ${{ inputs.count }}
+        run: python dubber/buffer_count.py >> "$GITHUB_OUTPUT"
+      - name: Start dubbing on Kaggle (free GPU)
+        if: steps.count.outputs.count != '0'
+        env:
+          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+          KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+          ORIG_FOLDER_ID: ${{ vars.SOURCE_FOLDER_ID }}
+          HI_DRIVE_FOLDER_ID: ${{ vars.DUBBED_FOLDER_ID }}
+        run: |
+          python dubber/build_kernel.py --count "${{ steps.count.outputs.count }}"
+          kaggle kernels push -p build/kernel
+          echo "✅ Started. Watch it at https://www.kaggle.com/code/$KAGGLE_USERNAME/maya-hindi-dubber"
+      - name: Previous run failed
+        if: steps.prev.outputs.failed == 'true'
+        run: |
+          echo "::error::The previous Kaggle dubbing run failed. Its log is shown in 'Check the previous dubbing run'."
+          exit 1
