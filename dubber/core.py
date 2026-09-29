@@ -6,8 +6,15 @@ PAUSE_SPLIT, USE_SILENCE, MAX_EARLY_START, FIT_BY_REWRITING, PACE_TOLERANCE, MUS
 import re, json, hashlib, shutil, subprocess, os
 import numpy as np, soundfile as sf
 
+class ToolError(RuntimeError):
+    pass
+
 def sh(*args):
-    subprocess.run(list(args), check=True, capture_output=True)
+    """Run a command; on failure raise with the tool's own error message (not just 'exit status 1')."""
+    r = subprocess.run(list(args), capture_output=True, text=True)
+    if r.returncode != 0:
+        raise ToolError(f"{args[0]} failed: {(r.stderr or r.stdout).strip()[-1500:]}")
+    return r
 
 def ffmpeg(*args):
     sh("ffmpeg", "-y", "-loglevel", "error", *args)
@@ -117,7 +124,7 @@ def gemini_json(prompt: str, attempts: int = 3):
     raise SystemExit(f"❌ Gemini failed after {attempts} tries: {last}")
 
 DEVANAGARI = {"hi", "bgc", "mr"}
-PROMPT_VERSION = 5   # bump when translation instructions change, so saved translations are redone
+PROMPT_VERSION = 6   # bump when translation instructions change, so saved translations are redone
 
 def rules(source_lang: str) -> str:
     src = LANG_NAMES.get(source_lang, source_lang)
@@ -128,10 +135,15 @@ def rules(source_lang: str) -> str:
                  "grammar and words (e.g. सै/सैं for है/हैं, थारा/म्हारा, के for क्या, घणा for बहुत, न्यूँ, इब, करै सै, "
                  "जावैगा), not Hindi with a few words changed. Keep it natural and respectful, not exaggerated. " + keep_words)
     elif TARGET_LANGUAGE_CODE == "bgc" and HARYANVI_STYLE == "Hindi with light Haryanvi touch":
-        style = ("Write normal everyday spoken Hindi (Devanagari) that every Hindi speaker understands easily, with a LIGHT "
-                 "Haryanvi touch: a direct, desi, confident tone and, where it sounds natural, an occasional common Haryanvi "
-                 "word (e.g. घणा, थारा/म्हारा, के for क्या). Grammar stays Hindi. Don't force it into every line; "
-                 "never exaggerate or make fun of the dialect. " + keep_words)
+        style = ("Write normal everyday spoken HINDI (Devanagari) with standard Hindi grammar, pronouns and verb forms "
+                 "(मैं…हूँ, मुझे, तुम्हें/तुझे, को, है, नहीं, करता/करती हूँ). The Haryanvi touch is ONLY a direct, desi, "
+                 "confident tone plus at most ONE common Haryanvi word in some sentences (घणा, थारा/म्हारा). "
+                 "NEVER use Haryanvi grammar or these words: मन्ने, तने, थमने, सूं, सै, सैं, कोनी, कोन्या, ढाळ, काढण, "
+                 "गेल, गेल्या, बरगी, कती, जमा, जे (for अगर), बढ़ण, खाण, दिखण, लगाण, पाणी, बालक, दूँ हूँ, करूँ हूँ, "
+                 "or 'ने' in place of 'को'. Use: मुझे, तुम्हें, हूँ, है, नहीं, की तरह, निकालने, के साथ, जैसी, अगर, पानी, बच्चे. "
+                 "Example: 'Drink me if you're stressed.' → GOOD: 'टेंशन में हो तो मुझे पियो।' "
+                 "TOO HEAVY: 'अगर तू टेंशन में हो, तो मन्ने पी।' "
+                 "Never make fun of the dialect. " + keep_words)
     elif TARGET_LANGUAGE_CODE == "bgc":
         style = ("Write HINDI with a Haryanvi flavour (Devanagari). Roughly 80% should be plain everyday Hindi that any "
                  "Hindi speaker in India understands instantly; the Haryanvi feel comes from a direct, confident desi tone "
@@ -186,6 +198,38 @@ def rules(source_lang: str) -> str:
 {("Context: " + VIDEO_CONTEXT) if VIDEO_CONTEXT else ""}"""
 
 LATIN = re.compile(r"[A-Za-z]")
+
+# Dialect words not allowed at each Haryanvi level (safety net after translation and after shortening)
+HEAVY_HARYANVI = ["कोन्या", "कोनी", "गेल", "गेल्या", "बरगी", "कती", "जमा", "ढाळ", "काढण", "दिखण", "लगाण", "पाणी", "बालक",
+                  "बढ़ण", "खाण", "छिलणा"]
+BANNED_WORDS = {
+    "Hindi with light Haryanvi touch": HEAVY_HARYANVI + ["मन्ने", "तने", "थमने", "सूं", "सै", "सैं", "जावैगा", "जावैंगे",
+                                                          "लागैगी", "रहवैगी", "करै", "दूँ हूँ", "करूँ हूँ"],
+    "Hindi with Haryanvi flavour": HEAVY_HARYANVI + ["मन्ने", "तने", "थमने"],
+}
+
+_PUNCT = re.compile(r"[।,!?.;:()\"'-]")
+
+def banned_in(text):
+    words = BANNED_WORDS.get(HARYANVI_STYLE, []) if TARGET_LANGUAGE_CODE == "bgc" else []
+    padded = " " + " ".join(_PUNCT.sub(" ", text or "").split()) + " "
+    return [w for w in words if " " + w + " " in padded]
+
+def fix_dialect(phrases, idxs):
+    """Safety net: replace dialect words that are too heavy for the chosen Haryanvi level (no other changes)."""
+    bad = {i: banned_in(phrases[i].get("text")) for i in idxs}
+    bad = {i: w for i, w in bad.items() if w}
+    if not bad:
+        return
+    fixed = gemini_json(f"""In each line, replace ONLY the listed dialect words (and any grammar that goes with them)
+with normal everyday Hindi, keeping the meaning, tone and everything else unchanged
+(e.g. मन्ने → मुझे, तने → तुम्हें, सूं/सै → हूँ/है, कोनी → नहीं, ढाळ → तरह, काढण → निकालने, पाणी → पानी).
+Return ONLY a JSON array of {{"i": <same i>, "text": "<line>"}}.
+Lines: {json.dumps([{"i": i, "text": phrases[i]["text"], "replace": w} for i, w in bad.items()], ensure_ascii=False)}""")
+    for o in fixed:
+        i = int(o.get("i", -1))
+        if i in bad and o.get("text") and len(banned_in(o["text"])) < len(bad[i]):
+            phrases[i]["text"] = o["text"]
 
 def fix_script(phrases, idxs):
     """Safety net: rewrite any Latin-letter words in Devanagari (no other changes)."""
@@ -247,6 +291,7 @@ Phrases: {json.dumps(pairs, ensure_ascii=False)}""")
         if not p["text"] and not p["keep_original"]:
             print(f"⚠️ Phrase {i} has no translation; add it with EDITS: {{{i}: \"...\"}}")
     fix_script(phrases, range(len(phrases)))
+    fix_dialect(phrases, range(len(phrases)))
     return phrases
 
 _TTS = None
@@ -344,7 +389,8 @@ WITHOUT changing or losing ANY meaning.
 Allowed: shorter synonyms, simpler or more compact grammar, removing repeated words and fillers, digits instead of number
 words, everyday words people actually say if they are shorter.
 NOT allowed: dropping any fact, ingredient, quantity, body part, condition, instruction or result; adding anything;
-changing the meaning or the tone. The phrases of a sentence must still join into one correct sentence.
+changing the meaning or the tone; making the language more dialectal to save characters (keep exactly the same
+language level as the current line; never swap in dialect words such as सूं, सै, मन्ने, कोनी). The phrases of a sentence must still join into one correct sentence.
 {rules(source_lang)}
 Return ONLY a JSON array of {{"i": <same i>, "text": "<shorter phrase>"}}.
 Phrases: {json.dumps(items, ensure_ascii=False)}""")
@@ -401,6 +447,7 @@ def dub(work, vocals, phrases, total):
                 phrases[i].setdefault("full_text", old)
                 phrases[i]["text"] = new_text
                 fix_script(phrases, [i])
+                fix_dialect(phrases, [i])
                 new_text = phrases[i]["text"]
                 clips[i] = voice_line(work, i, new_text, refs[phrases[i]["sent"]])
                 print(f"   {i:2d} {len(old)} → {len(new_text)} chars: {new_text}")
@@ -480,21 +527,30 @@ def write_srt(path, phrases, key):
     open(path, "w", encoding="utf-8").write("\n".join(blocks))
 
 def mix(video, voice, bg, out, total):
-    """Voice + background music. Music is turned down (MUSIC_VOLUME) and, with DUCKING, dips further while the voice speaks."""
-    if DUCKING:
-        pre = ("[1:a]aformat=channel_layouts=stereo,asplit=2[v][key];"
-               f"[2:a]volume={MUSIC_VOLUME}[m];"
-               "[m][key]sidechaincompress=threshold=0.02:ratio=6:attack=15:release=350[bg];")
-    else:
-        pre = f"[1:a]aformat=channel_layouts=stereo[v];[2:a]volume={MUSIC_VOLUME}[bg];"
-    graph = pre + "[v][bg]amix=inputs=2:normalize=0,loudnorm=I=-14:TP=-1.5:LRA=11,aresample=48000[a]"
-    common = ["-i", video, "-i", voice, "-i", bg, "-filter_complex", graph, "-map", "0:v", "-map", "[a]",
-              "-c:a", "aac", "-b:a", "192k", "-t", f"{total:.2f}", "-movflags", "+faststart"]
-    try:
-        ffmpeg(*common, "-c:v", "copy", out)             # keep the original picture untouched
-    except subprocess.CalledProcessError:                # codec not allowed in MP4 (e.g. some .mov): re-encode
-        ffmpeg(*common, "-c:v", "libx264", "-crf", "18", "-preset", "medium", "-pix_fmt", "yuv420p", out)
-
+    """Voice + background music. Music is turned down (MUSIC_VOLUME) and, with DUCKING, dips further while the voice
+    speaks. If a filter isn't available in this ffmpeg build, it falls back to simpler mixes instead of failing."""
+    ducked = ("[1:a]aformat=channel_layouts=stereo,asplit=2[v][key];"
+              f"[2:a]volume={MUSIC_VOLUME}[m];"
+              "[m][key]sidechaincompress=threshold=0.02:ratio=6:attack=15:release=350[bg];")
+    plain = f"[1:a]aformat=channel_layouts=stereo[v];[2:a]volume={MUSIC_VOLUME}[bg];"
+    graphs = ([ducked] if DUCKING else []) + [plain]
+    tails = ["[v][bg]amix=inputs=2:normalize=0,loudnorm=I=-14:TP=-1.5:LRA=11,aresample=48000[a]",
+             "[v][bg]amix=inputs=2:normalize=0,aresample=48000[a]"]
+    errors = []
+    for graph in graphs:
+        for tail in tails:
+            common = ["-i", video, "-i", voice, "-i", bg, "-filter_complex", graph + tail, "-map", "0:v", "-map", "[a]",
+                      "-c:a", "aac", "-b:a", "192k", "-t", f"{total:.2f}", "-movflags", "+faststart"]
+            for vcodec in (["-c:v", "copy"],                      # keep the original picture untouched
+                           ["-c:v", "libx264", "-crf", "18", "-preset", "medium", "-pix_fmt", "yuv420p"]):
+                try:
+                    ffmpeg(*common, *vcodec, out)
+                    if errors:
+                        print(f"ℹ️ Mixed with a simpler method (ffmpeg said: {errors[0][-300:]})")
+                    return
+                except ToolError as e:
+                    errors.append(str(e))
+    raise ToolError("Could not build the final video. ffmpeg errors:\n" + "\n---\n".join(errors[:3]))
 
 def dub_file(video, work):
     """Headless version of run_translation(): one video in, dubbed MP4 out. Returns (out_path, phrases)."""
