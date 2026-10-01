@@ -8,7 +8,15 @@
       "posted_at": "2026-09-29T21:50:55.502210+05:30",
       "local_hour": 21,
       "caption": "\u092e\u0948\u0902 \u0928\u0939\u0940\u0902 \u092c\u094b\u0932 \u0930\u0939\u093e, \u0925\u093e\u0930\u0940 \u091a\u093e\u092f \u0916\u0941\u0926 \u092c\u094b\u0932 \u0930\u0939\u0940 \u0939\u0948! \ud83d\udc80\n\u0939\u0930 \u092c\u0940\u092e\u093e\u0930\u0940 \u0915\u0940 \u091b\u0941\u091f\u094d\u091f\u0940 \u0915\u0930\u0928\u0947 \u092f\u0947 \u0926\u0947\u0938\u0940 \u091a\u093e\u092f \u0906 \u0917\u0908 \u0939\u0948\u0902! \u0906\u092a\u0915\u094b \u0907\u0928\u092e\u0947\u0902 \u0938\u0947 \u0915\u093f\u0938 \u091a\u093e\u092f \u0915\u0940 \u0938\u092c\u0938\u0947 \u091c\u093c\u094d\u092f\u093e\u0926\u093e \u091c\u093c\u0930\u0942\u0930\u0924 \u0939\u0948? \u0915\u092e\u0947\u0902\u091f \u092e\u0947\u0902 \u092c\u0924\u093e\u0913 \ud83d\udc47\n\n#objecttalkhindi #talkingobjects #talkingfood #viralaivideos #aivideos #tipsreels #desivibes #haryanvicomedy",
-      "metrics": null
+      "metrics": {
+        "views": 0,
+        "reach": 0,
+        "likes": 1,
+        "comments": 0,
+        "shares": 0,
+        "saved": 0,
+        "total_interactions": 1
+      }
     },
     {
       "file_id": "1Yqfe3VirIV_2Teslw_9YGhUzRxk6YBsT",
@@ -89,6 +97,16 @@
       "local_hour": 19,
       "caption": "POV: Jab aapke makeup products Haryanvi mein bolne lag jaye \ud83d\ude2e\nSacch batao, kab se apna beauty blender aur brush saaf nahi kiya? Tumhari skin ki band baja rahe hain ye log! Comment karke batao \ud83d\udc47\n\n#objecttalkingvideos #talkingobjects #aitalkingobjects #aianimation #haryanvireels #haryanvicomedy #desicomedy #viralreels",
       "metrics": null
+    },
+    {
+      "file_id": "1TaVnqS2VwMAQLS5_e7jLEmsZYzmzU6xJ",
+      "name": "200 - NEW VIDS (10).mp4",
+      "md5": "ee20f4c4bf6f7e2ad058a0b5060571e5",
+      "media_id": "18371176657243683",
+      "posted_at": "2026-10-01T22:12:04.476691+05:30",
+      "local_hour": 22,
+      "caption": "POV: Jab bathroom ki cheezein Haryanvi mein bolne lag jaye \ud83d\ude02\nInki sun lo varna skin aur hygiene dono kharab ho jayegi! Tumhari kaunsi cheez sabse zyada gandi rehti hai? Comment mein batao \ud83d\udc47\n\n#talkingobjects #aitalkingobjects #objecttalkingvideos #aianimation #haryanvicomedy #haryanvireels #desicomedy #hasnahamanahe",
+      "metrics": null
     }
   ],
   "failed": {},
@@ -101,7 +119,8 @@
   "plan_date": "2026-10-01",
   "done_slots": [
     "2026-10-01T13:00:00+05:30",
-    "2026-10-01T19:00:00+05:30"
+    "2026-10-01T19:00:00+05:30",
+    "2026-10-01T21:30:00+05:30"
   ],
   "in_flight": null,
   "trend_tags": {
