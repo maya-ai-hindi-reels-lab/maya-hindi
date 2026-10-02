@@ -98,7 +98,15 @@
       "posted_at": "2026-09-30T20:47:44.904127+05:30",
       "local_hour": 20,
       "caption": "Desi Nuskha No. 101: Agar ghar ki hawa filter karni hai toh bas ye lagalo \ud83c\udf3f\nMeet your natural air purifiers who work 24/7 without any electricity bill! From absorbing smoke to boosting oxygen, ye green friends sab handle kar lenge. Apne room me kaunsa lagayenge? Comment me batao!\n\n#talkingobjects #desitips #aivideos #desiai #reelsindia #trendingreels #viralreels #explorepage",
-      "metrics": null
+      "metrics": {
+        "views": 0,
+        "reach": 0,
+        "likes": 0,
+        "comments": 0,
+        "shares": 0,
+        "saved": 0,
+        "total_interactions": 0
+      }
     },
     {
       "file_id": "1ZNVPONj48fs5lkmfLmrPFwOa3TxJzzak",
@@ -159,6 +167,16 @@
       "local_hour": 11,
       "caption": "Haryanvi drugs be like: \"Maut tak thari saans rok dunga!\" \ud83d\udc80\nLean, Vape aur Adderall ka asli sach jaan lo warna bahut pachtoge! \ud83d\ude31 Inme se kaun sa sabse zyada khatarnak laga? Comments me batao \ud83d\udc47\n\n#aivideo #talkingobjects #haryanvimemes #hindimemes #aicomedy #dailygyaan #viralreels #explorepage",
       "metrics": null
+    },
+    {
+      "file_id": "1p7JdZs5Rr8VOFiRDEY2qFbJyFfPICdtn",
+      "name": "200 - NEW VIDS (13).mp4",
+      "md5": "69c48a92ba9030d41e79255c311bdd3b",
+      "media_id": "18106814612205357",
+      "posted_at": "2026-10-02T21:16:59.245898+05:30",
+      "local_hour": 21,
+      "caption": "Jab contraceptive options achanak se sach bolne lage \ud83d\ude2e\nBro, protection ke baare mein half-knowledge hamesha bhaari padti hai! Inme se kaunsa fact aapko pehle nahi pata tha? Comment karke batao! \ud83d\udc47\n\n#talkingobjects #aivideo #desitips #dailygyaan #contraception #sexeducation #viralreels #instagramreels",
+      "metrics": null
     }
   ],
   "failed": {},
@@ -171,7 +189,8 @@
   "plan_date": "2026-10-02",
   "done_slots": [
     "2026-10-02T08:04:00+05:30",
-    "2026-10-02T11:08:00+05:30"
+    "2026-10-02T11:08:00+05:30",
+    "2026-10-02T21:15:00+05:30"
   ],
   "in_flight": null,
   "trend_tags": {
