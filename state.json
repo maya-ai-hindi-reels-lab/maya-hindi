@@ -152,7 +152,15 @@
       "posted_at": "2026-10-01T19:25:42.753786+05:30",
       "local_hour": 19,
       "caption": "POV: Jab aapke makeup products Haryanvi mein bolne lag jaye \ud83d\ude2e\nSacch batao, kab se apna beauty blender aur brush saaf nahi kiya? Tumhari skin ki band baja rahe hain ye log! Comment karke batao \ud83d\udc47\n\n#objecttalkingvideos #talkingobjects #aitalkingobjects #aianimation #haryanvireels #haryanvicomedy #desicomedy #viralreels",
-      "metrics": null
+      "metrics": {
+        "views": 0,
+        "reach": 0,
+        "likes": 0,
+        "comments": 0,
+        "shares": 0,
+        "saved": 0,
+        "total_interactions": 0
+      }
     },
     {
       "file_id": "1TaVnqS2VwMAQLS5_e7jLEmsZYzmzU6xJ",
@@ -162,7 +170,15 @@
       "posted_at": "2026-10-01T22:12:04.476691+05:30",
       "local_hour": 22,
       "caption": "POV: Jab bathroom ki cheezein Haryanvi mein bolne lag jaye \ud83d\ude02\nInki sun lo varna skin aur hygiene dono kharab ho jayegi! Tumhari kaunsi cheez sabse zyada gandi rehti hai? Comment mein batao \ud83d\udc47\n\n#talkingobjects #aitalkingobjects #objecttalkingvideos #aianimation #haryanvicomedy #haryanvireels #desicomedy #hasnahamanahe",
-      "metrics": null
+      "metrics": {
+        "views": 0,
+        "reach": 0,
+        "likes": 0,
+        "comments": 0,
+        "shares": 0,
+        "saved": 0,
+        "total_interactions": 0
+      }
     },
     {
       "file_id": "1kIBsl86M4yVouqzxg17VjwIvM_5VdwQe",
@@ -213,6 +229,16 @@
       "local_hour": 11,
       "caption": "\u091c\u092c Desi Nuskhe \u0928\u0947 \u0939\u0930\u093f\u092f\u093e\u0923\u0935\u0940 \u092e\u0947\u0902 \u092c\u094b\u0932\u093e: '\u0918\u0923\u093e \u0924\u0917\u0921\u093c\u093e \u0935\u093e\u0930!' \ud83c\udf3f\nTea tree oil se lekar Ashwagandha tak, in desi remedies ke nakhre hi alag hain! \ud83d\ude02 Aapka go-to desi nuskha kaunsa hai? Comment mein batao! \ud83d\udc47\n\n#DesiNuskhe #HaryanviComedy #DesiJugaad #DesiFunny #TalkingObjects #AIVideo #AIGenerated #DesiHumor",
       "metrics": null
+    },
+    {
+      "file_id": "16sYxcJcrNX5p-6MPgtO61z9gxzsfBZ1j",
+      "name": "200 - NEW VIDS (16).mp4",
+      "md5": "ab2a60547296290fddbe93aadf148995",
+      "media_id": "18268143388305358",
+      "posted_at": "2026-10-03T23:58:06.791797+05:30",
+      "local_hour": 23,
+      "caption": "\u091c\u092c \u0939\u092e\u093e\u0930\u0940 \u0930\u094b\u091c\u093c \u0915\u0940 \u091a\u0940\u091c\u093c\u094b\u0902 \u0928\u0947 \u0939\u0930\u093f\u092f\u093e\u0923\u0935\u0940 \u092e\u0947\u0902 \u092c\u094b\u0932\u093e: '\u0938\u0941\u0927\u0930 \u091c\u093e\u0913!' \ud83e\udd10\nCheap earrings se lekar tight jeans tak, ye bejaan cheezein sab sach bol rahi hain! \ud83d\ude2d Apni aadat badlo ya inki suno. Inme se kaun si galti aap sabse zyada karte ho? Comment mein batao! \ud83d\udc47\n\n#HaryanviComedy #TalkingObjects #DesiNuskhe #FunnyAI #DesiHumor #HaryanviReels #HindiComedy #TrendingReelsIndia",
+      "metrics": null
     }
   ],
   "failed": {},
@@ -225,7 +251,8 @@
   "plan_date": "2026-10-03",
   "done_slots": [
     "2026-10-03T08:10:00+05:30",
-    "2026-10-03T11:00:00+05:30"
+    "2026-10-03T11:00:00+05:30",
+    "2026-10-03T22:02:00+05:30"
   ],
   "in_flight": null,
   "trend_tags": {
