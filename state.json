@@ -188,7 +188,15 @@
       "posted_at": "2026-10-02T08:15:28.810025+05:30",
       "local_hour": 8,
       "caption": "Jab ghar ke electronics achanak Haryanvi bolne lage \ud83d\ude21\nBed par laptop aur pillow ke neeche phone charge karna band karo! Electronics ko bhi khuli hava chahiye yaaro. \ud83d\ude02\n\nKaun si galti aap sabse zyada karte ho? Comment mein batao!\n\n#aivideo #talkingobjects #desicomedy #haryanvicomedy #aicomedy #haryanvimemes #hindicomedy #trendingreels",
-      "metrics": null
+      "metrics": {
+        "views": 0,
+        "reach": 0,
+        "likes": 0,
+        "comments": 0,
+        "shares": 0,
+        "saved": 0,
+        "total_interactions": 0
+      }
     },
     {
       "file_id": "1EHlpi1-lySdtsKY49y8RCWP8CVn47hdP",
@@ -239,6 +247,16 @@
       "local_hour": 23,
       "caption": "\u091c\u092c \u0939\u092e\u093e\u0930\u0940 \u0930\u094b\u091c\u093c \u0915\u0940 \u091a\u0940\u091c\u093c\u094b\u0902 \u0928\u0947 \u0939\u0930\u093f\u092f\u093e\u0923\u0935\u0940 \u092e\u0947\u0902 \u092c\u094b\u0932\u093e: '\u0938\u0941\u0927\u0930 \u091c\u093e\u0913!' \ud83e\udd10\nCheap earrings se lekar tight jeans tak, ye bejaan cheezein sab sach bol rahi hain! \ud83d\ude2d Apni aadat badlo ya inki suno. Inme se kaun si galti aap sabse zyada karte ho? Comment mein batao! \ud83d\udc47\n\n#HaryanviComedy #TalkingObjects #DesiNuskhe #FunnyAI #DesiHumor #HaryanviReels #HindiComedy #TrendingReelsIndia",
       "metrics": null
+    },
+    {
+      "file_id": "1jzj1zjSgn922b79fYGM00S0vBU2GcjgT",
+      "name": "200 - NEW VIDS (17).mp4",
+      "md5": "a679032abf3a1742fa6bd96c85a29195",
+      "media_id": "18086495228694347",
+      "posted_at": "2026-10-04T09:27:17.021232+05:30",
+      "local_hour": 9,
+      "caption": "POV: Jab aapka daant aapse Haryanvi mein baat karne lage: \"Ruk!\" \ud83e\uddb7\nVaseline, haldi aur apple cider vinegar ka ye Haryanvi nuskha try kiya hai? \ud83d\ude32 Share this with your friends and tell us in the comments if it worked!\n\n#AIVideo #TalkingObjects #HaryanviComedy #FunnyAI #DesiJugaad #DesiTips #HaryanviReels #HindiComedy",
+      "metrics": null
     }
   ],
   "failed": {},
@@ -249,59 +267,61 @@
     "2026-10-04T22:13:00+05:30"
   ],
   "plan_date": "2026-10-04",
-  "done_slots": [],
+  "done_slots": [
+    "2026-10-04T08:18:00+05:30"
+  ],
   "in_flight": null,
   "trend_tags": {
-    "date": "2026-10-03",
+    "date": "2026-10-04",
     "tags": [
       "AIVideo",
-      "HaryanviComedy",
-      "DesiJugaad",
-      "DesiFunny",
-      "HaryanviReels",
       "TalkingObjects",
-      "DesiNuskhe",
+      "HaryanviComedy",
       "HindiComedy",
-      "HindiReels",
-      "DesiMemes",
-      "HaryanviFunny",
+      "DesiFunny",
       "FunnyAI",
-      "HindiAI",
+      "DesiJugaad",
+      "HaryanviReels",
+      "DesiTips",
+      "HindiReels",
+      "AIVideos",
+      "DesiMemes",
+      "Bakchodi",
+      "HaryanviMeme",
       "AIGenerated",
-      "DesiHumor",
-      "INDBRA",
-      "IndianFootball",
-      "IndiaVsBrazil",
-      "GandhiJayanti",
+      "FahadhFaasil",
       "Navratri2026",
-      "NavratriVibes",
-      "GyanuResign",
-      "TrendingReelsIndia",
+      "IndianMemes",
+      "ReelsIndia",
+      "ViralReels",
+      "TrendingReels",
       "MemeSena",
       "ExplorePage",
-      "ViralReels",
-      "KolkataDiaries",
-      "DesiMemeCompilations",
-      "InstaReelsIndia",
-      "FunnyReelsIndia"
+      "ReelsInstagram",
+      "ViralVideo",
+      "TrendingNow",
+      "InstagramReels",
+      "ReelItFeelIt",
+      "October2026",
+      "GandhiJayanti"
     ],
     "source": "web search"
   },
   "trend_styles": {
-    "date": "2026-10-03",
+    "date": "2026-10-04",
     "styles": [
-      "\u091c\u092c ... \u0928\u0947 \u0939\u0930\u093f\u092f\u093e\u0923\u0935\u0940 \u092e\u0947\u0902 \u092c\u094b\u0932\u093e: \"...\"",
-      "POV: You are ... in a Haryanvi household when ...",
-      "... to ...: \"...\"",
-      "Desi Jugaad Level: ...",
-      "\u0935\u094b \u0926\u094b\u0938\u094d\u0924 \u091c\u094b \u0939\u092e\u0947\u0936\u093e ...",
-      "\u0910\u0938\u0940 Tips \u091c\u094b \u0938\u093f\u0930\u094d\u092b ... \u0939\u0940 \u092c\u0924\u093e \u0938\u0915\u0924\u0947 \u0939\u0948\u0902: ...",
-      "Try Not to ... (Gone Terribly ...)",
-      "Normalize ... instead of ...",
+      "Oye sun re... ... bol raha hoon, ...",
+      "... ki dard bhari kahani: ...",
+      "POV: Jab aapka ... aapse Haryanvi mein baat karne lage: \"...\"",
+      "Desi Advice of the Day: ...",
+      "Arre Maalik, thodi si galti ho gayi: ...",
+      "Mera dimaag completely ... mode mein chale gaya hai",
+      "POV: ... but you have zero civic sense",
       "This is your sign to ...",
+      "Things I know at ... that ...",
       "Nobody: ... / Me: ...",
-      "Entering ... with ... peace",
-      "Tell me ... without telling me"
+      "Once a day, once a week, once a month: ...",
+      "Where are you? / Home / Your location says ... / Exactly."
     ],
     "source": "web search"
   }
