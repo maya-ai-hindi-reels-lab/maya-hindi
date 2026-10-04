@@ -224,7 +224,15 @@
       "posted_at": "2026-10-02T21:16:59.245898+05:30",
       "local_hour": 21,
       "caption": "Jab contraceptive options achanak se sach bolne lage \ud83d\ude2e\nBro, protection ke baare mein half-knowledge hamesha bhaari padti hai! Inme se kaunsa fact aapko pehle nahi pata tha? Comment karke batao! \ud83d\udc47\n\n#talkingobjects #aivideo #desitips #dailygyaan #contraception #sexeducation #viralreels #instagramreels",
-      "metrics": null
+      "metrics": {
+        "views": 0,
+        "reach": 0,
+        "likes": 0,
+        "comments": 0,
+        "shares": 0,
+        "saved": 0,
+        "total_interactions": 0
+      }
     },
     {
       "file_id": "1Vpm29-75uYn__MFfoSplXomz4ihOcjR9",
@@ -275,6 +283,16 @@
       "local_hour": 11,
       "caption": "POV: Jab aapka 'down-there' dost Haryanvi mein baat kare \ud83d\ude02\nBhai, thodi toh safety aur hygiene maintain karo! Trimmer dhyan se chalao aur clean rakho. Kya aap iska dhyan rakhte ho?\n\n#AIVideo #HaryanviComedy #DesiFunny #DesiMemes #Bakchodi #TalkingObjects #FunnyAI #ReelsIndia",
       "metrics": null
+    },
+    {
+      "file_id": "1JPknESUHx1fvRW9Od0otVZkvsIcUNiWr",
+      "name": "200 - NEW VIDS (19).mp4",
+      "md5": "d8387ede06ba982170bbef7bb03320a6",
+      "media_id": "18117668719952670",
+      "posted_at": "2026-10-04T23:36:30.791162+05:30",
+      "local_hour": 23,
+      "caption": "Oye sun re... Minoxidil bol raha hoon, thare follicles jaga dunga! \ud83e\uddf4\nDaily minoxidil aur week me ek baar microneedling hai asli hair growth hack. Sabar rakho aur consistency banaye rakho! Kya aapne ye combination try kiya?\n\n#AIVideos #TalkingObjects #DesiTips #AIGenerated #HairCareTips #Minoxidil #ReelsIndia #ViralReels",
+      "metrics": null
     }
   ],
   "failed": {},
@@ -287,7 +305,8 @@
   "plan_date": "2026-10-04",
   "done_slots": [
     "2026-10-04T08:18:00+05:30",
-    "2026-10-04T11:00:00+05:30"
+    "2026-10-04T11:00:00+05:30",
+    "2026-10-04T22:13:00+05:30"
   ],
   "in_flight": null,
   "trend_tags": {
