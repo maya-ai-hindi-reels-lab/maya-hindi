@@ -278,7 +278,15 @@
       "posted_at": "2026-10-03T23:58:06.791797+05:30",
       "local_hour": 23,
       "caption": "\u091c\u092c \u0939\u092e\u093e\u0930\u0940 \u0930\u094b\u091c\u093c \u0915\u0940 \u091a\u0940\u091c\u093c\u094b\u0902 \u0928\u0947 \u0939\u0930\u093f\u092f\u093e\u0923\u0935\u0940 \u092e\u0947\u0902 \u092c\u094b\u0932\u093e: '\u0938\u0941\u0927\u0930 \u091c\u093e\u0913!' \ud83e\udd10\nCheap earrings se lekar tight jeans tak, ye bejaan cheezein sab sach bol rahi hain! \ud83d\ude2d Apni aadat badlo ya inki suno. Inme se kaun si galti aap sabse zyada karte ho? Comment mein batao! \ud83d\udc47\n\n#HaryanviComedy #TalkingObjects #DesiNuskhe #FunnyAI #DesiHumor #HaryanviReels #HindiComedy #TrendingReelsIndia",
-      "metrics": null
+      "metrics": {
+        "views": 0,
+        "reach": 0,
+        "likes": 0,
+        "comments": 0,
+        "shares": 0,
+        "saved": 0,
+        "total_interactions": 0
+      }
     },
     {
       "file_id": "1jzj1zjSgn922b79fYGM00S0vBU2GcjgT",
@@ -344,16 +352,12 @@
   "failed": {},
   "skipped": {},
   "plan": [
-    "2026-10-05T08:02:00+05:30",
-    "2026-10-05T11:03:00+05:30",
-    "2026-10-05T22:20:00+05:30"
+    "2026-10-06T08:13:00+05:30",
+    "2026-10-06T11:08:00+05:30",
+    "2026-10-06T22:03:00+05:30"
   ],
-  "plan_date": "2026-10-05",
-  "done_slots": [
-    "2026-10-05T08:02:00+05:30",
-    "2026-10-05T11:03:00+05:30",
-    "2026-10-05T22:20:00+05:30"
-  ],
+  "plan_date": "2026-10-06",
+  "done_slots": [],
   "in_flight": null,
   "trend_tags": {
     "date": "2026-10-05",
