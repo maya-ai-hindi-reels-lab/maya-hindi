@@ -314,7 +314,15 @@
       "posted_at": "2026-10-04T11:14:23.609324+05:30",
       "local_hour": 11,
       "caption": "POV: Jab aapka 'down-there' dost Haryanvi mein baat kare \ud83d\ude02\nBhai, thodi toh safety aur hygiene maintain karo! Trimmer dhyan se chalao aur clean rakho. Kya aap iska dhyan rakhte ho?\n\n#AIVideo #HaryanviComedy #DesiFunny #DesiMemes #Bakchodi #TalkingObjects #FunnyAI #ReelsIndia",
-      "metrics": null
+      "metrics": {
+        "views": 156,
+        "reach": 135,
+        "likes": 0,
+        "comments": 0,
+        "shares": 0,
+        "saved": 0,
+        "total_interactions": 0
+      }
     },
     {
       "file_id": "1JPknESUHx1fvRW9Od0otVZkvsIcUNiWr",
@@ -365,6 +373,16 @@
       "local_hour": 8,
       "caption": "POV: Jab aapka 'down there' Haryanvi bolne lage \ud83d\udc80\nWet swimsuits, cheap perfume, and rusty razors? It is literally begging for mercy! \ud83d\ude2d Girls, stop ruining your pH balance. Inme se kaunsi galti aap abhi bhi karte ho? Comment karke batao \ud83d\udc47\n\n#AITalkingObjects #TalkingObjects #HaryanviComedy #DesiComedy #DesiTips #ComedyReels #RelatableMemes #IntimateHygiene",
       "metrics": null
+    },
+    {
+      "file_id": "13Fob-OsT6lGBKs21KGS2jUocEziuqhO-",
+      "name": "200 - NEW VIDS (24).mp4",
+      "md5": "171d3a351fa0e465c2b94213e7e44a79",
+      "media_id": "17974673397137773",
+      "posted_at": "2026-10-06T11:15:27.973155+05:30",
+      "local_hour": 11,
+      "caption": "POV: Jab aapka khana Haryanvi bolne lage \ud83d\udc80\nRam-Ram bhai saareya ne! \ud83d\ude02 Diet plan follow karna hai ya fir inki sunni hai? Comment karke batao aapka favorite food kaunsa hai! \ud83d\udc47\n\n#AITalkingObjects #TalkingObjects #AIVideo #AIAnimation #HaryanviComedy #HaryanviJokes #DesiComedy #ComedyReels",
+      "metrics": null
     }
   ],
   "failed": {},
@@ -376,7 +394,8 @@
   ],
   "plan_date": "2026-10-06",
   "done_slots": [
-    "2026-10-06T08:13:00+05:30"
+    "2026-10-06T08:13:00+05:30",
+    "2026-10-06T11:08:00+05:30"
   ],
   "in_flight": null,
   "trend_tags": {
