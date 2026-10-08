@@ -19,7 +19,11 @@ FB_ACCESS_TOKEN = _env("FB_ACCESS_TOKEN")              # optional: trending hash
 FB_IG_USER_ID = _env("FB_IG_USER_ID")                  # IG business ID under Facebook Login
 
 # --- Source ---
-DRIVE_FOLDER_ID = _env("DRIVE_FOLDER_ID", "1pMEvp8XsHOS6mJRQFh04Yj3ViSrBK8QY")
+# The "Maya Hindi dubbed" folder (GitHub variable DUBBED_FOLDER_ID). No default: falling back to the
+# English originals folder would post undubbed videos.
+DRIVE_FOLDER_ID = _env("DRIVE_FOLDER_ID") or _env("DUBBED_FOLDER_ID")
+if not DRIVE_FOLDER_ID:
+    raise SystemExit("DUBBED_FOLDER_ID is not set (repo Settings → Secrets and variables → Actions → Variables).")
 BACKGROUND_MUSIC_ID = _env("BACKGROUND_MUSIC_ID")      # Drive file used only for videos with no audio
 # Subfolders with these names are ignored (put videos you already posted manually here)
 SKIP_FOLDERS = {f.strip().lower() for f in _env("SKIP_FOLDERS", "posted,done,skip").split(",") if f.strip()}
@@ -49,13 +53,15 @@ MAX_DURATION = float(_env("MAX_DURATION", "90"))
 AI_PROVIDER = _env("AI_PROVIDER", "auto").lower()   # auto | gemini | claude
 GEMINI_MODEL = _env("GEMINI_MODEL", "gemini-3.5-flash")
 CLAUDE_MODEL = _env("CLAUDE_MODEL", "claude-sonnet-5")
-CAPTION_LANGUAGE = _env("CAPTION_LANGUAGE", "English")
+CAPTION_LANGUAGE = _env("CAPTION_LANGUAGE",
+                        "Hinglish - Hindi written in English (Roman) letters mixed with common English words, "
+                        "the way young Indians type on Instagram. Casual and catchy, no Devanagari script.")
 # Tags added to every reel (before the AI's tags); total capped at MAX_HASHTAGS
 ALWAYS_HASHTAGS = [h.strip().lstrip("#") for h in _env("ALWAYS_HASHTAGS").replace(" ", ",").split(",") if h.strip().lstrip("#")]
 MAX_HASHTAGS = int(_env("MAX_HASHTAGS", "8"))
 # Daily trending-hashtag research via Gemini + Google Search (falls back to model knowledge)
-TREND_TOPIC = _env("TREND_TOPIC", "AI-generated videos of talking objects and talking food, funny animated reels")
-TREND_REGION = _env("TREND_REGION", "United States, United Kingdom, Canada, Australia")
+TREND_TOPIC = _env("TREND_TOPIC", "Hindi and Haryanvi AI videos of talking objects, desi funny and tips reels")
+TREND_REGION = _env("TREND_REGION", "India")
 TREND_SEARCH = _env("TREND_SEARCH", "true").lower() == "true"
 NICHE_HASHTAGS = [h.strip().lstrip("#") for h in _env("NICHE_HASHTAGS").split(",") if h.strip()]
 
@@ -70,6 +76,7 @@ VIDEO_URL_TEMPLATE = _env("VIDEO_URL_TEMPLATE",
 API_VERSION = _env("IG_API_VERSION", "v22.0")
 GRAPH_HOST = "https://graph.facebook.com" if UPLOAD_MODE == "resumable" else "https://graph.instagram.com"
 RUPLOAD_HOST = "https://rupload.facebook.com/ig-api-upload"
+# Meta reports online_followers hours in Pacific time, whatever the audience's country
 ONLINE_FOLLOWERS_TZ = ZoneInfo(_env("ONLINE_FOLLOWERS_TZ", "America/Los_Angeles"))
 
-STATE_FILE = _env("STATE_FILE", "state.json")   # state_hi.json for the Hindi account
+STATE_FILE = _env("STATE_FILE", "state.json")

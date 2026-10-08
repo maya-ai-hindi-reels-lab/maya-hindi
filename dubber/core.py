@@ -394,7 +394,8 @@ language level as the current line; never swap in dialect words such as सू�
 {rules(source_lang)}
 Return ONLY a JSON array of {{"i": <same i>, "text": "<shorter phrase>"}}.
 Phrases: {json.dumps(items, ensure_ascii=False)}""")
-    proposals = {int(o["i"]): o.get("text", "").strip() for o in rewritten if o.get("text", "").strip()}
+    proposals = {int(o["i"]): str(o.get("text") or "").strip() for o in rewritten
+                 if "i" in o and str(o.get("text") or "").strip()}
     if not proposals:
         return {}
     check_items = [{"i": i, "source": phrases[i]["src"], "rewritten": t,
@@ -407,6 +408,8 @@ Return ONLY a JSON array of {{"i": <same i>, "ok": <true|false>, "missing": "<wh
 Phrases: {json.dumps(check_items, ensure_ascii=False)}""")
     accepted = {}
     for v in verdicts:
+        if "i" not in v:
+            continue
         i = int(v["i"])
         if v.get("ok") and i in proposals:
             accepted[i] = proposals[i]

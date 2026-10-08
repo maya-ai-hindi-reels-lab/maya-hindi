@@ -47,6 +47,7 @@ jobs:
           KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
           ORIG_FOLDER_ID: ${{ vars.SOURCE_FOLDER_ID }}
           HI_DRIVE_FOLDER_ID: ${{ vars.DUBBED_FOLDER_ID }}
+          SKIP_FOLDERS: ${{ vars.SKIP_FOLDERS }}
         run: |
           python dubber/build_kernel.py --count "${{ steps.count.outputs.count }}"
           kaggle kernels push -p build/kernel

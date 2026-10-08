@@ -38,6 +38,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
           DRIVE_FOLDER_ID: ${{ vars.DUBBED_FOLDER_ID }}
+          SKIP_FOLDERS: ${{ vars.SKIP_FOLDERS }}
           POSTS_PER_DAY: ${{ vars.POSTS_PER_DAY || '3' }}
           LOCAL_TZ: ${{ vars.LOCAL_TZ || 'Asia/Kolkata' }}
           DEFAULT_SLOTS: ${{ vars.DEFAULT_SLOTS || '13:00,19:00,21:30' }}

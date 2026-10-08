@@ -64,7 +64,7 @@ running cost is Gemini, which comes to cents per month.
 - **Buffer:** the dubbing run keeps **6 dubbed videos ready**, dubbing at most **4 per night**. Posting takes 3 a day,
   so a failed night doesn't interrupt posting.
 - **Same code everywhere:** `dubber/core.py` contains exactly the functions of the Colab notebook
-  `video_dubbing_live.ipynb`, so what you test in Colab is what runs automatically.
+  `video_dubbing_live.ipynb` (kept outside this repo), so what you test in Colab is what runs automatically.
 - **Never twice:** a video is never dubbed twice (tracked by Drive file ID and content fingerprint) and never posted twice.
 
 ---
@@ -307,7 +307,7 @@ Repo → **Settings → Secrets and variables → Actions**.
 | Name | Value |
 |---|---|
 | `SOURCE_FOLDER_ID` | English videos folder: `1pMEvp8XsHOS6mJRQFh04Yj3ViSrBK8QY` |
-| `DUBBED_FOLDER_ID` | "Maya Hindi dubbed" folder ID (Setup B7) |
+| `DUBBED_FOLDER_ID` | "Maya Hindi dubbed" folder ID (Setup B7). Posting stops with an error if it's missing |
 | `DEFAULT_CAPTION` | Hindi caption used only if the AI fails, e.g. `आखिर तक देखो 😂 ऐसे और मज़ेदार वीडियो के लिए फॉलो करो!` |
 
 ### Variables (optional: defaults shown)
@@ -321,6 +321,7 @@ Repo → **Settings → Secrets and variables → Actions**.
 | `MIN_GAP_HOURS` | `3` | Minimum hours between posts (≈ 16 ÷ posts per day) |
 | `CAPTION_LANGUAGE` | Hinglish (Hindi in English letters + English words) | Language/style of Instagram title, caption and hashtags (the dubbed audio stays Hindi) |
 | `ALWAYS_HASHTAGS` | *(none)* | Tags forced onto every reel (e.g. `mayaai`) |
+| `SKIP_FOLDERS` | `posted,done,skip` | Subfolder names ignored by both dubbing and posting |
 | `TREND_TOPIC` | Hindi/Haryanvi AI talking-object reels | What trends to research |
 | `TREND_REGION` | `India` | Where trends are researched |
 | `BUFFER` | `6` | Dubbed videos to keep ready |
@@ -428,7 +429,7 @@ Between slots it just says `No slot due.`
 | **Change posting times** | Variable `DEFAULT_SLOTS` (used until it has learned) |
 | **Change dubbing style / music** | Edit `dubber/settings.json` → commit |
 | **Re-dub a video** | Delete it (and its `.txt`) from "Maya Hindi dubbed"; the next run dubs it again |
-| **Skip an English video** | Move it into a subfolder named `posted`, `done` or `skip` in the English folder |
+| **Skip an English video** | Move it into a subfolder named `posted`, `done` or `skip` in the English folder (names set by `SKIP_FOLDERS`) |
 | **Stop posting temporarily** | Actions → instagram-autopost → **⋯ → Disable workflow** (same for dub). Enable again later |
 | **Change Gemini key / Drive token / service account** | Update the secret, then run **kaggle-secrets** |
 | **Test a setting before automating** | Try it in the Colab notebook (`video_dubbing_live.ipynb`) on one video |
@@ -437,18 +438,19 @@ Between slots it just says `No slot due.`
 
 ## 13. Updating the code
 
-Local project folder: `/Users/mac/Desktop/idris/ig-autopost-repo-hindi/files` (linked to GitHub).
+Local project folder: `/Users/mac/Desktop/idris/ig-autopost-repo-hindi/maya-hindi-repo` (linked to GitHub).
 
 ```bash
-cd /Users/mac/Desktop/idris/ig-autopost-repo-hindi/files
-rsync -a --exclude .git /path/to/new/maya-hindi/ ./     # copy in the new files
+cd /Users/mac/Desktop/idris/ig-autopost-repo-hindi/maya-hindi-repo
+git pull                                                  # first: get the bot's latest state.json
+rsync -a --exclude .git --exclude state.json /path/to/new/maya-hindi/ ./   # copy in the new files (never the old history)
 git add -A
 git commit -m "Describe the change"
 git pull                                                  # always before push (the bot commits state.json)
 git push
 ```
 
-- **Order is always add → commit → pull → push.**
+- **Order is always pull → add → commit → pull → push.**
 - **Never `git push --force`:** it would delete `state.json` (the posted-video history).
 - The password prompt wants a **fine-grained token** (Contents + Workflows), not your GitHub password.
 - After changing anything in `dubber/`, the next **dub** run uses it automatically.
@@ -540,7 +542,8 @@ git push
 
 ## 18. The Colab notebook
 
-`video_dubbing_live.ipynb` is the interactive version of the dubbing pipeline, with identical code. Use it to:
+`video_dubbing_live.ipynb` is the interactive version of the dubbing pipeline, with identical code. It is **not stored
+in this repo**; keep your copy in Google Drive/Colab. Use it to:
 - **test settings** on one video before changing `dubber/settings.json`;
 - **preview** a dub and fix individual lines with `EDITS`;
 - **adjust the music** instantly with the remix cell.

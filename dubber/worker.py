@@ -89,8 +89,9 @@ def natural_key(path):
     return [int(t) if t.isdigit() else t for t in re.split(r"(\d+)", stem)], path.lower()
 
 def list_videos(svc, root):
-    """All videos under root (subfolders included, shortcuts followed, 'posted/done/skip' folders ignored)."""
+    """All videos under root (subfolders included, shortcuts followed, SKIP_FOLDERS ignored)."""
     FOLDER, SHORTCUT = "application/vnd.google-apps.folder", "application/vnd.google-apps.shortcut"
+    skip = set(PARAMS.get("skip_folders") or ("posted", "done", "skip"))
     fields = "nextPageToken, files(id,name,mimeType,md5Checksum,shortcutDetails)"
     out, queue, seen = [], [(root, "")], {root}
     while queue:
@@ -108,7 +109,7 @@ def list_videos(svc, root):
                     except Exception:
                         continue
                 if f["mimeType"] == FOLDER:
-                    if name.strip().lower() not in {"posted", "done", "skip"} and f["id"] not in seen:
+                    if name.strip().lower() not in skip and f["id"] not in seen:
                         seen.add(f["id"]); queue.append((f["id"], f"{prefix}{name}/"))
                 elif f["mimeType"].startswith("video/"):
                     out.append({"id": f["id"], "name": name, "path": prefix + name, "md5": f.get("md5Checksum")})

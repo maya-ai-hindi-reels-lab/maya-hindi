@@ -21,9 +21,11 @@ while True:
     token = resp.get("nextPageToken")
     if not token:
         break
-STATE = os.environ.get("STATE_FILE") or "state_hi.json"
+STATE = os.environ.get("STATE_FILE") or "state.json"
+MAX_RETRIES = 3  # same as config.MAX_RETRIES: videos that failed this often are never posted
 state = json.load(open(STATE)) if os.path.exists(STATE) else {}
 used = {p["file_id"] for p in state.get("posts", [])} | set(state.get("skipped", {}))
+used |= {fid for fid, n in state.get("failed", {}).items() if n >= MAX_RETRIES}
 ready = len(ids - used)
 count = max(0, min(MAX_PER_RUN, BUFFER - ready))
 print(f"Ready to post: {ready}, buffer target: {BUFFER} -> dub {count}", file=sys.stderr)
