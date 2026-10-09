@@ -566,6 +566,8 @@ so it is exactly the code the nightly Kaggle run uses. Use it to:
    - `GEMINI_API_KEY`: the same Gemini key as the GitHub secret;
    - `GH_TOKEN`: GitHub **Settings → Developer settings → Fine-grained tokens → Generate**, only `maya-hindi`,
      **Contents: Read-only**. (Without it, step 1 asks you to upload the repo ZIP: GitHub → **Code → Download ZIP**.)
+   - `HF_TOKEN` (optional, recommended): free Hugging Face token (huggingface.co → **Settings → Access Tokens** →
+     *Read*). Speeds up the ~3 GB voice-model downloads that Chatterbox and Seed-VC do once per Colab session.
 
 Secrets stay in your Colab account; they are not saved in the notebook.
 
@@ -577,7 +579,7 @@ Secrets stay in your Colab account; they are not saved in the notebook.
 | 3 · Transcribe | Pick a video (upload, Drive/web link, or a Drive path with `MOUNT_DRIVE`) → Demucs + Whisper |
 | 4 · Translate | Gemini translation with the form's settings. **Change settings and re-run only this step** to compare |
 | 5 · Edits | Optional: replace individual lines by number |
-| 6 · Dub | Voice, timing and mix → plays the video (tick `DOWNLOAD` to save it). `VOICE_ENGINE` = **compare all 3** plays one version per engine, side by side |
+| 6 · Dub | Voice, timing and mix → plays the video (tick `DOWNLOAD` to save it). `VOICE_ENGINE` = **compare all 3** plays one version per engine, side by side. Versions are kept, so you can also run one engine at a time. The first Chatterbox / Seed-VC use downloads ~2–3 GB: let it finish |
 | 7 · Remix | Optional: change only the music level of every version, instantly |
 | 8 · Settings | Prints the settings you used: paste into `dubber/settings.json` on GitHub to make them the default |
 

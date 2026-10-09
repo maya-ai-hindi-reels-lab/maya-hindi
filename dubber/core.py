@@ -366,7 +366,8 @@ def chatterbox_model():
     global _CHATTERBOX
     if _CHATTERBOX is None:
         from chatterbox.mtl_tts import ChatterboxMultilingualTTS
-        _CHATTERBOX = ChatterboxMultilingualTTS.from_pretrained(device="cuda", t3_model="v3")
+        print("[Info] Loading Chatterbox (first time in a session it downloads ~3 GB; can take a few minutes)...", flush=True)
+        _CHATTERBOX =ChatterboxMultilingualTTS.from_pretrained(device="cuda", t3_model="v3")
     return _CHATTERBOX
 
 def speak_chatterbox(text, ref):
@@ -380,6 +381,8 @@ def seedvc_model():
     global _SEEDVC
     if _SEEDVC is None:
         import sys, tarfile, urllib.request, torch, yaml
+        print("[Info] Loading Seed-VC (first time in a session it downloads ~2 GB of models; can take a few minutes)...",
+              flush=True)
         if not os.path.exists(f"{SEEDVC_DIR}/configs/v2/vc_wrapper.yaml"):
             urllib.request.urlretrieve(f"https://codeload.github.com/Plachtaa/seed-vc/tar.gz/{SEEDVC_SHA}", "/tmp/seed-vc.tgz")
             with tarfile.open("/tmp/seed-vc.tgz") as t:
