@@ -7,6 +7,8 @@ Instagram account: **3 reels a day, at the best times for an Indian audience, wi
 Everything runs on **free services**: GitHub Actions, Kaggle (free GPU), Google Drive and the Instagram API. The only
 running cost is Gemini, which comes to cents per month.
 
+**Test translation/dubbing on one video in Colab:** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/maya-ai-hindi-reels-lab/maya-hindi/blob/main/colab/dub_test.ipynb) (see [section 18](#18-the-colab-notebook))
+
 ---
 
 ## Contents
@@ -44,7 +46,7 @@ running cost is Gemini, which comes to cents per month.
               ▼
  ┌──────────────────────────┐
  │ Kaggle free GPU (T4)     │  Demucs → Whisper → Gemini → OmniVoice → ffmpeg
- │ maya-hindi-dubber        │  same code as the Colab notebook
+ │ maya-hindi-dubber        │  same code as the Colab test notebook
  └────────────┬─────────────┘
               │ uploads video + Hindi script (.txt)
               ▼
@@ -63,8 +65,8 @@ running cost is Gemini, which comes to cents per month.
 
 - **Buffer:** the dubbing run keeps **6 dubbed videos ready**, dubbing at most **4 per night**. Posting takes 3 a day,
   so a failed night doesn't interrupt posting.
-- **Same code everywhere:** `dubber/core.py` contains exactly the functions of the Colab notebook
-  `video_dubbing_live.ipynb` (kept outside this repo), so what you test in Colab is what runs automatically.
+- **Same code everywhere:** the Colab test notebook (`colab/dub_test.ipynb`) downloads and runs `dubber/core.py`
+  from this repo, so what you test in Colab is exactly what runs automatically.
 - **Never twice:** a video is never dubbed twice (tracked by Drive file ID and content fingerprint) and never posted twice.
 
 ---
@@ -182,11 +184,13 @@ maya-hindi/
 ├── dubber/                   Everything that runs on Kaggle
 │   ├── settings.json         Dubbing settings (same names as the notebook)
 │   ├── bootstrap.py          Installs PyTorch 2.8, OmniVoice, Demucs, Whisper, current ffmpeg
-│   ├── core.py               Dubbing functions (identical to the Colab notebook)
+│   ├── core.py               Dubbing functions (used by Kaggle and the Colab notebook)
 │   ├── worker.py             Picks next videos, dubs them, uploads to Drive
 │   ├── build_kernel.py       Assembles the single-file Kaggle script + metadata
 │   ├── buffer_count.py       Decides how many to dub (keeps 6 ready)
 │   └── kaggle_status.py      Detects a failed previous Kaggle run and prints its log
+├── colab/
+│   └── dub_test.ipynb        Test translation/dubbing on one video in Colab (uses dubber/core.py)
 ├── tools/
 │   └── setup_drive_upload.py One-time Colab script: creates the dubbed folder + Drive token
 ├── main.py                   Posting: schedule, pick next video, publish, stats
@@ -432,7 +436,7 @@ Between slots it just says `No slot due.`
 | **Skip an English video** | Move it into a subfolder named `posted`, `done` or `skip` in the English folder (names set by `SKIP_FOLDERS`) |
 | **Stop posting temporarily** | Actions → instagram-autopost → **⋯ → Disable workflow** (same for dub). Enable again later |
 | **Change Gemini key / Drive token / service account** | Update the secret, then run **kaggle-secrets** |
-| **Test a setting before automating** | Try it in the Colab notebook (`video_dubbing_live.ipynb`) on one video |
+| **Test a setting before automating** | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/maya-ai-hindi-reels-lab/maya-hindi/blob/main/colab/dub_test.ipynb) → try it on one video ([section 18](#18-the-colab-notebook)) |
 
 ---
 
@@ -542,14 +546,39 @@ git push
 
 ## 18. The Colab notebook
 
-`video_dubbing_live.ipynb` is the interactive version of the dubbing pipeline, with identical code. It is **not stored
-in this repo**; keep your copy in Google Drive/Colab. Use it to:
-- **test settings** on one video before changing `dubber/settings.json`;
-- **preview** a dub and fix individual lines with `EDITS`;
-- **adjust the music** instantly with the remix cell.
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/maya-ai-hindi-reels-lab/maya-hindi/blob/main/colab/dub_test.ipynb)
 
-Run it on Colab with **Runtime → T4 GPU**: run the install cell (the session restarts), then the rest top to bottom.
-The Translation config cell has the same settings as `settings.json`.
+`colab/dub_test.ipynb` runs the dubbing pipeline on **one video** in Colab. It downloads `dubber/core.py` from this repo,
+so it is exactly the code the nightly Kaggle run uses. Use it to:
+- **test translation settings** (language, Haryanvi level, style, tone, context) before changing `dubber/settings.json`;
+- **preview** the full dub and fix individual lines with `EDITS`;
+- **adjust the music** instantly with the remix step.
+
+### One-time setup
+1. Click the badge. The repo is private, so Colab asks to **authorize GitHub** the first time: allow it (if the badge
+   says the notebook isn't found: Colab → **File → Open notebook → GitHub** → tick **Include private repos** → pick
+   `maya-ai-hindi-reels-lab/maya-hindi` → `colab/dub_test.ipynb`).
+2. **Runtime → Change runtime type → T4 GPU**.
+3. 🔑 **Secrets** (left bar) → add with *Notebook access* on:
+   - `GEMINI_API_KEY`: the same Gemini key as the GitHub secret;
+   - `GH_TOKEN`: GitHub **Settings → Developer settings → Fine-grained tokens → Generate**, only `maya-hindi`,
+     **Contents: Read-only**. (Without it, step 2 asks you to upload `dubber/core.py` and `dubber/settings.json`.)
+
+Secrets stay in your Colab account; they are not saved in the notebook.
+
+### Using it
+| Step | What it does |
+|---|---|
+| 1 · Install | Installs the same versions as Kaggle (~3 min). The session restarts once; that's expected |
+| 2 · Get code | Downloads the repo (`BRANCH` = `main`, or a branch you're testing) and reads `settings.json` |
+| 3 · Transcribe | Pick a video (upload, Drive/web link, or a Drive path with `MOUNT_DRIVE`) → Demucs + Whisper |
+| 4 · Translate | Gemini translation with the form's settings. **Change settings and re-run only this step** to compare |
+| 5 · Edits | Optional: replace individual lines by number |
+| 6 · Dub | Cloned voice, timing and mix → plays the video (tick `DOWNLOAD` to save it) |
+| 7 · Remix | Optional: change only the music level, instantly |
+| 8 · Settings | Prints the settings you used: paste into `dubber/settings.json` on GitHub to make them the default |
+
+The form defaults match the current `dubber/settings.json`; if you change that file, update the defaults in the notebook too.
 
 ---
 

@@ -3,21 +3,11 @@ import io, json, re, shutil, time, traceback
 
 def main():
     S = PARAMS["settings"]
-    g = globals()
-    g.update({k: v for k, v in S.items() if k != "GEMINI_MODEL"})
-    g["MODEL"] = S.get("GEMINI_MODEL", "gemini-3.5-flash")
-    g["LANG_NAMES"] = {"hi": "Hindi", "bgc": "Haryanvi", "bn": "Bengali", "mr": "Marathi", "gu": "Gujarati", "ta": "Tamil",
-                       "te": "Telugu", "kn": "Kannada", "ml": "Malayalam", "pa": "Punjabi", "ur": "Urdu", "en": "English"}
     code = S["TARGET_LANGUAGE_CODE"]
-    target = g["LANG_NAMES"].get(code, code)
-    if code == "bgc" and S.get("HARYANVI_STYLE") != "Full Haryanvi":
-        target = "Hindi with a Haryanvi style"
-    g["TARGET_LANGUAGE"], g["TTS_LANGUAGE"] = target, {"bgc": "hi"}.get(code, code)
 
     from google import genai
     from google.genai import types as gtypes
-    g["client"] = genai.Client(api_key=kaggle_secret("gemini_api_key.txt"))
-    g["types"] = gtypes
+    configure(S, genai.Client(api_key=kaggle_secret("gemini_api_key.txt")), gtypes)
 
     from google.oauth2 import service_account
     from google.oauth2.credentials import Credentials

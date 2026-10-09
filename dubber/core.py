@@ -1,10 +1,25 @@
-"""Dubbing core: identical to the functions in video_dubbing_live.ipynb (Colab).
-Expects these globals to be set by the caller: client, types, MODEL, LANG_NAMES, TARGET_LANGUAGE_CODE, TARGET_LANGUAGE,
+"""Dubbing core, shared by the Kaggle worker and the Colab test notebook (colab/dub_test.ipynb).
+Call configure() first: it sets the globals used below (client, types, MODEL, TARGET_LANGUAGE_CODE, TARGET_LANGUAGE,
 TTS_LANGUAGE, ECHO_TARGET_LANGUAGE, TRANSLATION_STYLE, HARYANVI_STYLE, VIDEO_CONTEXT, CONFIDENT_TONE, WHISPER_MODEL,
-PAUSE_SPLIT, USE_SILENCE, MAX_EARLY_START, FIT_BY_REWRITING, PACE_TOLERANCE, MUSIC_VOLUME, DUCKING."""
+PAUSE_SPLIT, USE_SILENCE, MAX_EARLY_START, FIT_BY_REWRITING, PACE_TOLERANCE, MUSIC_VOLUME, DUCKING)."""
 
 import re, json, hashlib, shutil, subprocess, os
 import numpy as np, soundfile as sf
+
+LANG_NAMES = {"hi": "Hindi", "bgc": "Haryanvi", "bn": "Bengali", "mr": "Marathi", "gu": "Gujarati", "ta": "Tamil",
+              "te": "Telugu", "kn": "Kannada", "ml": "Malayalam", "pa": "Punjabi", "ur": "Urdu", "en": "English"}
+
+def configure(settings, gemini_client, gemini_types):
+    """Apply dubber/settings.json-style values (and the Gemini client) to this module."""
+    g = globals()
+    g.update({k: v for k, v in settings.items() if k != "GEMINI_MODEL"})
+    g["MODEL"] = settings.get("GEMINI_MODEL", "gemini-3.5-flash")
+    code = settings["TARGET_LANGUAGE_CODE"]
+    target = LANG_NAMES.get(code, code)
+    if code == "bgc" and settings.get("HARYANVI_STYLE") != "Full Haryanvi":
+        target = "Hindi with a Haryanvi style"
+    g["TARGET_LANGUAGE"], g["TTS_LANGUAGE"] = target, {"bgc": "hi"}.get(code, code)
+    g["client"], g["types"] = gemini_client, gemini_types
 
 class ToolError(RuntimeError):
     pass
