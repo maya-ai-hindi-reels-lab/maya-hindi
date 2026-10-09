@@ -494,7 +494,15 @@
       "posted_at": "2026-10-07T22:20:08.070731+05:30",
       "local_hour": 22,
       "caption": "\u0906\u0916\u093f\u0930 \u0924\u0915 \u0926\u0947\u0916\u094b \ud83d\ude02 \u0910\u0938\u0947 \u0914\u0930 \u092e\u091c\u093c\u0947\u0926\u093e\u0930 \u0935\u0940\u0921\u093f\u092f\u094b \u0915\u0947 \u0932\u093f\u090f \u092b\u0949\u0932\u094b \u0915\u0930\u094b!",
-      "metrics": null
+      "metrics": {
+        "views": 0,
+        "reach": 0,
+        "likes": 0,
+        "comments": 0,
+        "shares": 0,
+        "saved": 0,
+        "total_interactions": 0
+      }
     },
     {
       "file_id": "1Y8bL5REoWSZ-rX5nkUidqcchR6yW6diw",
