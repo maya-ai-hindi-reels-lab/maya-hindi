@@ -13,5 +13,7 @@
   "PACE_TOLERANCE": 1.08,
   "MUSIC_VOLUME": 0.25,
   "DUCKING": true,
-  "GEMINI_MODEL": "gemini-3.5-flash"
+  "GEMINI_MODEL": "gemini-3.5-flash",
+  "VOICE_ENGINE": "omnivoice",
+  "HINDI_VOICE": "auto"
 }

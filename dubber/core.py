@@ -1,7 +1,8 @@
 """Dubbing core, shared by the Kaggle worker and the Colab test notebook (colab/dub_test.ipynb).
 Call configure() first: it sets the globals used below (client, types, MODEL, TARGET_LANGUAGE_CODE, TARGET_LANGUAGE,
 TTS_LANGUAGE, ECHO_TARGET_LANGUAGE, TRANSLATION_STYLE, HARYANVI_STYLE, VIDEO_CONTEXT, CONFIDENT_TONE, WHISPER_MODEL,
-PAUSE_SPLIT, USE_SILENCE, MAX_EARLY_START, FIT_BY_REWRITING, PACE_TOLERANCE, MUSIC_VOLUME, DUCKING)."""
+PAUSE_SPLIT, USE_SILENCE, MAX_EARLY_START, FIT_BY_REWRITING, PACE_TOLERANCE, MUSIC_VOLUME, DUCKING, and optionally
+VOICE_ENGINE and HINDI_VOICE)."""
 
 import re, json, hashlib, shutil, subprocess, os
 import numpy as np, soundfile as sf
@@ -339,7 +340,7 @@ def voice_samples(work, vocals, phrases):
         refs[sent] = (path, " ".join([text] * reps))
     return refs, voc, vsr
 
-def speak(text, ref, duration=None):
+def speak_omnivoice(text, ref, duration=None):
     tts = tts_model()
     kw = dict(text=text, ref_audio=ref[0], ref_text=ref[1])
     if duration:
@@ -349,6 +350,102 @@ def speak(text, ref, duration=None):
     except TypeError:
         audio = tts.generate(**kw)
     return np.asarray(audio[0]), 24000
+
+# ---- Voice engines (VOICE_ENGINE). Cloning from the English speaker carries an English accent, so:
+#   omnivoice         : OmniVoice clones the original speaker directly (original voice, English accent)
+#   chatterbox        : Chatterbox Multilingual clones the original speaker with cfg_weight=0 (less accent bleed)
+#   hindi_then_seedvc : OmniVoice speaks in a native Hindi voice (dubber/voices), then Seed-VC changes only the
+#                       timbre to the original speaker (native pronunciation, close to the original voice)
+
+VOICES_DIR = os.path.join(os.path.dirname(os.path.abspath(globals().get("__file__", "."))), "voices")
+SEEDVC_SHA = "51383efd921027683c89e5348211d93ff12ac2a8"   # pinned Plachtaa/seed-vc commit
+SEEDVC_DIR = "/tmp/seed-vc"
+
+_CHATTERBOX = None
+def chatterbox_model():
+    global _CHATTERBOX
+    if _CHATTERBOX is None:
+        from chatterbox.mtl_tts import ChatterboxMultilingualTTS
+        _CHATTERBOX = ChatterboxMultilingualTTS.from_pretrained(device="cuda", t3_model="v3")
+    return _CHATTERBOX
+
+def speak_chatterbox(text, ref):
+    """No fixed-duration mode: the last-resort fit in dub() speeds it up with atempo instead."""
+    model = chatterbox_model()
+    wav = model.generate(text, language_id=TTS_LANGUAGE, audio_prompt_path=ref[0], cfg_weight=0.0)
+    return wav.squeeze(0).detach().cpu().numpy(), model.sr
+
+_SEEDVC = None
+def seedvc_model():
+    global _SEEDVC
+    if _SEEDVC is None:
+        import sys, tarfile, urllib.request, torch, yaml
+        if not os.path.exists(f"{SEEDVC_DIR}/configs/v2/vc_wrapper.yaml"):
+            urllib.request.urlretrieve(f"https://codeload.github.com/Plachtaa/seed-vc/tar.gz/{SEEDVC_SHA}", "/tmp/seed-vc.tgz")
+            with tarfile.open("/tmp/seed-vc.tgz") as t:
+                t.extractall("/tmp")
+            shutil.rmtree(SEEDVC_DIR, ignore_errors=True)
+            os.rename(f"/tmp/seed-vc-{SEEDVC_SHA}", SEEDVC_DIR)
+        if SEEDVC_DIR not in sys.path:
+            sys.path.insert(0, SEEDVC_DIR)
+        from hydra.utils import instantiate
+        from omegaconf import DictConfig
+        cwd = os.getcwd()
+        os.chdir(SEEDVC_DIR)                             # Seed-VC downloads its checkpoints into ./checkpoints
+        try:
+            model = instantiate(DictConfig(yaml.safe_load(open("configs/v2/vc_wrapper.yaml"))))
+            model.load_checkpoints()
+        finally:
+            os.chdir(cwd)
+        model.to(torch.device("cuda")).eval()
+        model.setup_ar_caches(max_batch_size=1, max_seq_len=4096, dtype=torch.float16, device=torch.device("cuda"))
+        _SEEDVC = model
+    return _SEEDVC
+
+def seedvc_convert(source_wav, target_wav):
+    """Timbre-only conversion (convert_style=False): keeps the source's words, timing and pronunciation."""
+    import torch
+    full = None
+    for _, out in seedvc_model().convert_voice_with_streaming(
+            source_audio_path=source_wav, target_audio_path=target_wav, diffusion_steps=30, length_adjust=1.0,
+            intelligebility_cfg_rate=0.7, similarity_cfg_rate=0.7, top_p=0.9, temperature=1.0, repetition_penalty=1.0,
+            convert_style=False, anonymization_only=False, device=torch.device("cuda"), dtype=torch.float16,
+            stream_output=True):
+        full = out if out is not None else full
+    if full is None:
+        raise ToolError("Seed-VC returned no audio")
+    sr, audio = full
+    return np.asarray(audio, dtype=np.float32), sr
+
+_HINDI_REF = {}
+def hindi_reference(ref):
+    """Native Hindi voice (path, text) for the original speaker: HINDI_VOICE male/female, or auto by pitch."""
+    choice = globals().get("HINDI_VOICE", "auto")
+    if choice == "auto":
+        if ref[0] not in _HINDI_REF:
+            import librosa
+            y, sr = librosa.load(ref[0], sr=16000)
+            f0, voiced, _ = librosa.pyin(y, fmin=60, fmax=500, sr=sr)
+            pitch = float(np.nanmedian(f0[voiced])) if np.any(voiced) else 0.0
+            _HINDI_REF[ref[0]] = "female" if pitch >= 165 else "male"
+            print(f"   🎙️ {os.path.basename(ref[0])}: median pitch {pitch:.0f} Hz → {_HINDI_REF[ref[0]]} Hindi voice")
+        choice = _HINDI_REF[ref[0]]
+    voices = json.load(open(f"{VOICES_DIR}/voices.json", encoding="utf-8"))
+    return f"{VOICES_DIR}/{voices[choice]['file']}", voices[choice]["text"]
+
+def speak_hindi_then_seedvc(text, ref, duration=None):
+    audio, sr = speak_omnivoice(text, hindi_reference(ref), duration)
+    tmp = ref[0].rsplit(".", 1)[0] + "_native_tmp.wav"
+    sf.write(tmp, audio, sr)
+    return seedvc_convert(tmp, ref[0])
+
+def speak(text, ref, duration=None):
+    engine = globals().get("VOICE_ENGINE", "omnivoice")
+    if engine == "chatterbox":
+        return speak_chatterbox(text, ref)
+    if engine == "hindi_then_seedvc":
+        return speak_hindi_then_seedvc(text, ref, duration)
+    return speak_omnivoice(text, ref, duration)
 
 def voice_line(work, i, text, ref, duration=None):
     """Speak one phrase, trim edge silence. Returns (wav path, seconds)."""

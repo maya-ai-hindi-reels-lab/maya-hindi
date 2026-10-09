@@ -10,6 +10,11 @@ user = os.environ["KAGGLE_USERNAME"]
 skip = [f.strip().lower() for f in (os.environ.get("SKIP_FOLDERS") or "posted,done,skip").split(",") if f.strip()]
 params = {"count": a.count, "orig_folder": os.environ["ORIG_FOLDER_ID"], "dub_folder": os.environ["HI_DRIVE_FOLDER_ID"],
           "skip_folders": skip, "settings": json.load(open(f"{here}/settings.json"))}
+if params["settings"].get("VOICE_ENGINE") == "hindi_then_seedvc":
+    # Kaggle gets a single script, so the native Hindi reference voices travel inside it
+    import base64
+    params["voices"] = {name: base64.b64encode(open(f"{here}/voices/{name}", "rb").read()).decode()
+                        for name in sorted(os.listdir(f"{here}/voices")) if name.endswith((".wav", ".json"))}
 os.makedirs(a.out, exist_ok=True)
 src = ["import json\n", f"PARAMS = json.loads({json.dumps(json.dumps(params, ensure_ascii=False))})\n"]
 for part in ("bootstrap.py", "core.py", "worker.py"):

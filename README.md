@@ -84,7 +84,7 @@ For each English video, Kaggle runs:
 | 5 | Translate | **Gemini** | Each sentence is translated **completely and exactly**, split into the same phrases as the original |
 | 6 | Verify | Gemini (2nd pass) | Each translation is checked against the English; anything missing or wrong is fixed |
 | 7 | Safety checks | Local + Gemini | Any English words in Latin letters are rewritten in Devanagari; any dialect words too heavy for the chosen style are replaced with Hindi |
-| 8 | Voice | **OmniVoice** | Each phrase is spoken in a **clone of the original speaker's voice**, cloned from their own sentence |
+| 8 | Voice | **OmniVoice** (or Chatterbox / Seed-VC, see `VOICE_ENGINE`) | Each phrase is spoken in a **clone of the original speaker's voice**, cloned from their own sentence |
 | 9 | Fit timing | see below | Each phrase is fitted into the original's time without overlaps |
 | 10 | Mix | **ffmpeg** | Hindi voice + original music (turned down, with ducking) → final MP4, original picture untouched |
 | 11 | Upload | Google Drive API (your account) | Video + `.txt` with the Hindi script go to "Maya Hindi dubbed" |
@@ -183,8 +183,9 @@ maya-hindi/
 │   └── refresh-token.yml     "refresh-ig-token": weekly, renews the Instagram token
 ├── dubber/                   Everything that runs on Kaggle
 │   ├── settings.json         Dubbing settings (same names as the notebook)
-│   ├── bootstrap.py          Installs PyTorch 2.8, OmniVoice, Demucs, Whisper, current ffmpeg
+│   ├── bootstrap.py          Installs PyTorch 2.8, OmniVoice, Demucs, Whisper, current ffmpeg (+ chosen voice engine)
 │   ├── core.py               Dubbing functions (used by Kaggle and the Colab notebook)
+│   ├── voices/               Native Hindi reference voices for VOICE_ENGINE=hindi_then_seedvc (FLEURS, CC BY 4.0)
 │   ├── worker.py             Picks next videos, dubs them, uploads to Drive
 │   ├── build_kernel.py       Assembles the single-file Kaggle script + metadata
 │   ├── buffer_count.py       Decides how many to dub (keeps 6 ready)
@@ -355,6 +356,8 @@ Same names and meaning as the Colab notebook. Edit on GitHub (file → ✏️ �
 | `MUSIC_VOLUME` | `0.25` | Background music level (1.0 = original) |
 | `DUCKING` | `true` | Music dips while the voice speaks |
 | `GEMINI_MODEL` | `gemini-3.5-flash` | Model used for translation |
+| `VOICE_ENGINE` | `omnivoice` | `omnivoice` = clone the original voice directly (keeps an English accent) · `chatterbox` = Chatterbox Multilingual clone with accent reduction · `hindi_then_seedvc` = native Hindi voice, then Seed-VC changes it to the original speaker's voice (native pronunciation). Compare them in Colab first ([section 18](#18-the-colab-notebook)) |
+| `HINDI_VOICE` | `auto` | For `hindi_then_seedvc`: which native voice in `dubber/voices` speaks first. `auto` picks male/female from the original speaker's pitch |
 
 Videos already dubbed are **not** re-dubbed after a settings change. To redo one, see [section 12](#12-common-tasks).
 
@@ -520,7 +523,7 @@ git push
 
 | Item | Limit | This project's usage |
 |---|---|---|
-| Kaggle GPU | ~30 h/week | ~15–25 min per nightly run |
+| Kaggle GPU | ~30 h/week | ~15–25 min per nightly run (`hindi_then_seedvc`: ~25–40 min, extra model downloads and a second voice pass) |
 | GitHub Actions (private) | 2,000 min/month | ~1,500 (posting every 30 min + nightly dub). If close: set the autopost schedule to `0 * * * *` (hourly) |
 | Instagram API publishing | 100 posts / 24 h | 3/day |
 | Google Drive (new account) | 15 GB | Dubbed videos; delete old ones if it fills up (posting history is kept in `state.json`) |
@@ -562,20 +565,20 @@ so it is exactly the code the nightly Kaggle run uses. Use it to:
 3. 🔑 **Secrets** (left bar) → add with *Notebook access* on:
    - `GEMINI_API_KEY`: the same Gemini key as the GitHub secret;
    - `GH_TOKEN`: GitHub **Settings → Developer settings → Fine-grained tokens → Generate**, only `maya-hindi`,
-     **Contents: Read-only**. (Without it, step 2 asks you to upload `dubber/core.py` and `dubber/settings.json`.)
+     **Contents: Read-only**. (Without it, step 1 asks you to upload the repo ZIP: GitHub → **Code → Download ZIP**.)
 
 Secrets stay in your Colab account; they are not saved in the notebook.
 
 ### Using it
 | Step | What it does |
 |---|---|
-| 1 · Install | Installs the same versions as Kaggle (~3 min). The session restarts once; that's expected |
-| 2 · Get code | Downloads the repo (`BRANCH` = `main`, or a branch you're testing) and reads `settings.json` |
+| 1 · Get code + install | Downloads the repo (`BRANCH` = `main`, or a branch you're testing) and installs exactly what Kaggle installs, plus all voice engines (~5 min). The session restarts once; that's expected |
+| 2 · Load | Loads `dubber/core.py` and `settings.json` |
 | 3 · Transcribe | Pick a video (upload, Drive/web link, or a Drive path with `MOUNT_DRIVE`) → Demucs + Whisper |
 | 4 · Translate | Gemini translation with the form's settings. **Change settings and re-run only this step** to compare |
 | 5 · Edits | Optional: replace individual lines by number |
-| 6 · Dub | Cloned voice, timing and mix → plays the video (tick `DOWNLOAD` to save it) |
-| 7 · Remix | Optional: change only the music level, instantly |
+| 6 · Dub | Voice, timing and mix → plays the video (tick `DOWNLOAD` to save it). `VOICE_ENGINE` = **compare all 3** plays one version per engine, side by side |
+| 7 · Remix | Optional: change only the music level of every version, instantly |
 | 8 · Settings | Prints the settings you used: paste into `dubber/settings.json` on GitHub to make them the default |
 
 The form defaults match the current `dubber/settings.json`; if you change that file, update the defaults in the notebook too.
@@ -590,8 +593,10 @@ The form defaults match the current `dubber/settings.json`; if you change that f
 
 **Will it re-dub videos after I change settings?** No, only new ones. Delete a dubbed video to redo it.
 
-**Why is the voice slightly accented?** The voice is cloned from the English speaker to keep the character's voice, and
-a little of the original accent can carry over.
+**Why does the Hindi voice sound English-accented?** With `VOICE_ENGINE` = `omnivoice`, the voice is cloned from the
+English speaker, and the cloning copies their English pronunciation too. Set `VOICE_ENGINE` to `chatterbox` (less
+accent) or `hindi_then_seedvc` (native Hindi pronunciation, converted to the speaker's voice). Compare all three
+on one video in Colab, step 6, before changing `dubber/settings.json`.
 
 **Why no lip sync?** Open-source lip-sync models only work on human faces, not talking objects.
 

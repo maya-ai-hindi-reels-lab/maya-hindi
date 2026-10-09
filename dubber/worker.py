@@ -4,6 +4,15 @@ import io, json, re, shutil, time, traceback
 def main():
     S = PARAMS["settings"]
     code = S["TARGET_LANGUAGE_CODE"]
+    if PARAMS.get("voices"):                      # native Hindi reference voices for VOICE_ENGINE=hindi_then_seedvc
+        import base64
+        g = globals()
+        g["VOICES_DIR"] = "/kaggle/working/voices"
+        os.makedirs(g["VOICES_DIR"], exist_ok=True)
+        for name, data in PARAMS["voices"].items():
+            with open(f"{g['VOICES_DIR']}/{name}", "wb") as f:
+                f.write(base64.b64decode(data))
+    print(f"[Info] Voice engine: {S.get('VOICE_ENGINE', 'omnivoice')}", flush=True)
 
     from google import genai
     from google.genai import types as gtypes
