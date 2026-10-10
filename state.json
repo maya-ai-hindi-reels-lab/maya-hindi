@@ -548,7 +548,15 @@
       "posted_at": "2026-10-08T11:16:21.643407+05:30",
       "local_hour": 11,
       "caption": "Agar aapke room ki cheezein bol sakti, toh sabse pehle ye bolti: \ud83d\udc80\nPhone, bottle aur bed pe pada wo ganda plate... sab aapse pareshan hain! \ud83d\ude02 Inme se kaunsa object aapko sabse zyada sunata? Comment mein batao! \ud83d\udc47\n\n#aivideos #talkingobjects #hindiaivideo #desicomedy #aicomedy #comedyreels #reelsindia #relatablememes",
-      "metrics": null
+      "metrics": {
+        "views": 0,
+        "reach": 0,
+        "likes": 0,
+        "comments": 0,
+        "shares": 0,
+        "saved": 0,
+        "total_interactions": 0
+      }
     },
     {
       "file_id": "1viNwtpsS7B_d_tiSyrzaEkL4IOjBtsN-",
@@ -599,6 +607,16 @@
       "local_hour": 8,
       "caption": "Haryanvi style mein: Jab everyday objects ne humko roast kar diya \ud83d\udc80\nIn sabhi objects mein se kiski baat sabse zyada sach aur relatable lagi? Comments mein batao! \ud83d\udc47\n\n#aivideos #aicomedy #talkingobjects #desiai #haryanvidesi #haryanvicomedy #desicomedy #aianimation",
       "metrics": null
+    },
+    {
+      "file_id": "132I_-eY3qYpy6DKaeIXc86nPkrTqYcMT",
+      "name": "200 - NEW VIDS (37).mp4",
+      "md5": "215bc068307085e2a01e9e9fdbc473c7",
+      "media_id": "18343924810252357",
+      "posted_at": "2026-10-10T11:47:41.274145+05:30",
+      "local_hour": 11,
+      "caption": "POV: Jab aapke baal Haryanvi mein gyaan dene lage \ud83d\udc80\nGhar par ye simple porosity test karo aur sahi hair oil chuno! Aapka hair porosity konsa nikla? Comment mein batao \ud83d\udc47\n\n#aivideos #aianimation #talkingobjects #haryanvicomedy #tipsreels #trendingreels #reelsindia #desiai",
+      "metrics": null
     }
   ],
   "failed": {},
@@ -610,7 +628,8 @@
   ],
   "plan_date": "2026-10-10",
   "done_slots": [
-    "2026-10-10T08:05:00+05:30"
+    "2026-10-10T08:05:00+05:30",
+    "2026-10-10T11:19:00+05:30"
   ],
   "in_flight": null,
   "trend_tags": {
