@@ -372,8 +372,11 @@ def chatterbox_model():
 
 def speak_chatterbox(text, ref):
     """No fixed-duration mode: the last-resort fit in dub() speeds it up with atempo instead."""
+    import warnings
     model = chatterbox_model()
-    wav = model.generate(text, language_id=TTS_LANGUAGE, audio_prompt_path=ref[0], cfg_weight=0.0)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", FutureWarning)   # torch sdp_kernel deprecation, printed on every line
+        wav = model.generate(text, language_id=TTS_LANGUAGE, audio_prompt_path=ref[0], cfg_weight=0.0)
     return wav.squeeze(0).detach().cpu().numpy(), model.sr
 
 _SEEDVC = None
@@ -389,6 +392,14 @@ def seedvc_model():
                 t.extractall("/tmp")
             shutil.rmtree(SEEDVC_DIR, ignore_errors=True)
             os.rename(f"/tmp/seed-vc-{SEEDVC_SHA}", SEEDVC_DIR)
+        # huggingface_hub 1.x no longer passes/accepts proxies and resume_download; Seed-VC's BigVGAN still requires them
+        bigvgan = f"{SEEDVC_DIR}/modules/bigvgan/bigvgan.py"
+        src = open(bigvgan).read()
+        patched = (src.replace("proxies: Optional[Dict],", "proxies: Optional[Dict] = None,")
+                      .replace("resume_download: bool,", "resume_download: bool = False,")
+                      .replace("proxies=proxies,", "").replace("resume_download=resume_download,", ""))
+        if patched != src:
+            open(bigvgan, "w").write(patched)
         if SEEDVC_DIR not in sys.path:
             sys.path.insert(0, SEEDVC_DIR)
         from hydra.utils import instantiate
@@ -505,7 +516,9 @@ Allowed: shorter synonyms, simpler or more compact grammar, removing repeated wo
 words, everyday words people actually say if they are shorter.
 NOT allowed: dropping any fact, ingredient, quantity, body part, condition, instruction or result; adding anything;
 changing the meaning or the tone; making the language more dialectal to save characters (keep exactly the same
-language level as the current line; never swap in dialect words such as सूं, सै, मन्ने, कोनी). The phrases of a sentence must still join into one correct sentence.
+language level as the current line; never swap in dialect words such as सूं, सै, मन्ने, कोनी); changing how the viewer
+is addressed or the verb form (पियो stays पियो, never पी; तुम्हें never becomes तुझे); dropping words that sharpen the
+meaning (suddenly/अचानक, very/घणा, instantly/तुरंत, numbers). The phrases of a sentence must still join into one correct sentence.
 {rules(source_lang)}
 Return ONLY a JSON array of {{"i": <same i>, "text": "<shorter phrase>"}}.
 Phrases: {json.dumps(items, ensure_ascii=False)}""")
@@ -518,7 +531,9 @@ Phrases: {json.dumps(items, ensure_ascii=False)}""")
                    for i, t in proposals.items()]
     verdicts = gemini_json(f"""Check each shortened {TARGET_LANGUAGE} dubbing phrase against its source phrase.
 Is the COMPLETE meaning preserved: every fact, ingredient, quantity, body part, condition, instruction and result,
-with nothing dropped, changed or added? Minor wording differences are fine.{" Confident wording (sure statements and direct instructions instead of may/might/can/try, without शायद / हो सकता है) is intended and counts as preserved meaning." if CONFIDENT_TONE else ""}
+with nothing dropped, changed or added? Minor wording differences are fine. Answer ok=false if the form of address or
+verb form changed (e.g. पियो → पी, तुम्हें → तुझे) or a word that sharpens the meaning was dropped (suddenly/अचानक,
+very/घणा, instantly/तुरंत, numbers).{" Confident wording (sure statements and direct instructions instead of may/might/can/try, without शायद / हो सकता है) is intended and counts as preserved meaning." if CONFIDENT_TONE else ""}
 Return ONLY a JSON array of {{"i": <same i>, "ok": <true|false>, "missing": "<what is lost, or empty>"}}.
 Phrases: {json.dumps(check_items, ensure_ascii=False)}""")
     accepted = {}
