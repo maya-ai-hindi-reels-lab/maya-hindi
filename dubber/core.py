@@ -211,7 +211,7 @@ def rules(source_lang: str) -> str:
   correct, complete {TARGET_LANGUAGE} sentence.
 - Keep each phrase about as long to say as the source phrase (its seconds are given).
 - Match the tone of the original. No added slang, jokes or fillers.
-{confident_rule}- Address the viewer the same way throughout the whole script (don't mix तुम / आप / थारा forms within a sentence).
+{confident_rule}- Address the viewer the same way throughout the whole script (don't mix तुम / आप{' / थारा' if TARGET_LANGUAGE_CODE == 'bgc' else ''} forms within a sentence).
 - {style}{script_rule}
 - Set "keep_original": true (and "text": "") ONLY for phrases that are pure non-speech sounds or interjections
   (laughs, "wow", "hmm", singing) → "keep_reason": "sound", or that are already spoken in {TARGET_LANGUAGE}
@@ -564,6 +564,10 @@ def plan_slots(phrases, lengths, total):
         prev_end = min(start + length, latest_end)
     return slots
 
+def very_words():
+    """Example words for "very" in prompts: the Haryanvi घणा only when a Haryanvi style is chosen."""
+    return "very/बहुत/घणा" if TARGET_LANGUAGE_CODE == "bgc" else "very/बहुत"
+
 def fit_by_rewriting(phrases, too_long, source_lang):
     """Gemini rephrases the too-long phrases shorter with the SAME meaning; a second call checks the meaning.
     Only rewrites that keep the complete meaning are accepted. Returns {i: new_text}."""
@@ -585,7 +589,7 @@ NOT allowed: dropping any fact, ingredient, quantity, body part, condition, inst
 changing the meaning or the tone; making the language more dialectal to save characters (keep exactly the same
 language level as the current line; never swap in dialect words such as सूं, सै, मन्ने, कोनी); changing how the viewer
 is addressed or the verb form (पियो stays पियो, never पी; तुम्हें never becomes तुझे); dropping words that sharpen the
-meaning (suddenly/अचानक, very/घणा, instantly/तुरंत, numbers). The phrases of a sentence must still join into one correct sentence.
+meaning (suddenly/अचानक, {very_words()}, instantly/तुरंत, numbers). The phrases of a sentence must still join into one correct sentence.
 {rules(source_lang)}
 Return ONLY a JSON array of {{"i": <same i>, "text": "<shorter phrase>"}}.
 Phrases: {json.dumps(items, ensure_ascii=False)}""")
@@ -600,7 +604,7 @@ Phrases: {json.dumps(items, ensure_ascii=False)}""")
 Is the COMPLETE meaning preserved: every fact, ingredient, quantity, body part, condition, instruction and result,
 with nothing dropped, changed or added? Minor wording differences are fine. Answer ok=false if the form of address or
 verb form changed (e.g. पियो → पी, तुम्हें → तुझे) or a word that sharpens the meaning was dropped (suddenly/अचानक,
-very/घणा, instantly/तुरंत, numbers).{" Confident wording (sure statements and direct instructions instead of may/might/can/try, without शायद / हो सकता है) is intended and counts as preserved meaning." if CONFIDENT_TONE else ""}
+{very_words()}, instantly/तुरंत, numbers).{" Confident wording (sure statements and direct instructions instead of may/might/can/try, without शायद / हो सकता है) is intended and counts as preserved meaning." if CONFIDENT_TONE else ""}
 Return ONLY a JSON array of {{"i": <same i>, "ok": <true|false>, "missing": "<what is lost, or empty>"}}.
 Phrases: {json.dumps(check_items, ensure_ascii=False)}""")
     accepted = {}
