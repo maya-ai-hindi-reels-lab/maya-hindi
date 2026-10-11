@@ -74,7 +74,7 @@ def _parse_tags(text):
     tags, seen = [], set()
     for token in re.split(r"[,\n]+", text):
         token = token.strip().strip(".*-•` ").lstrip("#")
-        if re.fullmatch(r"[A-Za-z0-9_]{2,40}", token) and token.lower() not in seen | SPAM:
+        if re.fullmatch(r"[A-Za-z0-9_]{2,40}", token) and token.lower() not in seen | SPAM and not config.blocked(token):
             seen.add(token.lower())
             tags.append(token)
     return tags[:30]
@@ -122,7 +122,7 @@ def _parse_lines(text):
     out = []
     for line in text.splitlines():
         line = re.sub(r"^\s*(?:[-*•]|\d+[.)])\s*", "", line).strip().strip("*").strip()
-        if 5 <= len(line) <= 120 and not line.endswith(":") and line not in out:
+        if 5 <= len(line) <= 120 and not line.endswith(":") and line not in out and not config.blocked(line):
             out.append(line)
     return out[:12]
 

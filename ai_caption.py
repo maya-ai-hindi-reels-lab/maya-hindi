@@ -30,7 +30,7 @@ def hashtag_line(ai_tags=()):
     seen, out = set(), []
     for tag in list(config.ALWAYS_HASHTAGS) + [str(t) for t in ai_tags]:
         clean = tag.strip().lstrip("#").replace(" ", "")
-        if clean and clean.lower() not in seen:
+        if clean and clean.lower() not in seen and not config.blocked(clean):
             seen.add(clean.lower())
             out.append("#" + clean)
     return " ".join(out[: config.MAX_HASHTAGS])

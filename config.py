@@ -64,6 +64,12 @@ TREND_TOPIC = _env("TREND_TOPIC", "Hindi AI videos of talking objects, desi funn
 TREND_REGION = _env("TREND_REGION", "India")
 TREND_SEARCH = _env("TREND_SEARCH", "true").lower() == "true"
 NICHE_HASHTAGS = [h.strip().lstrip("#") for h in _env("NICHE_HASHTAGS").split(",") if h.strip()]
+# Hashtags / trend formats containing any of these words are never used (the dub is pure Hindi, not Haryanvi)
+BLOCKED_WORDS = [w.strip().lower() for w in _env("BLOCKED_WORDS", "haryanvi,haryana,हरियाणवी").split(",") if w.strip()]
+
+
+def blocked(text):
+    return any(w in (text or "").lower() for w in BLOCKED_WORDS)
 
 # --- Upload method ---
 # url       = Instagram downloads the original file from a public Drive link (Instagram Login; default)

@@ -695,56 +695,5 @@
     "2026-10-11T08:18:00+05:30",
     "2026-10-11T11:15:00+05:30"
   ],
-  "in_flight": null,
-  "trend_tags": {
-    "date": "2026-10-11",
-    "tags": [
-      "AIVideo",
-      "AIGenerated",
-      "TalkingObject",
-      "HindiAI",
-      "HaryanviMemes",
-      "HaryanviReels",
-      "DesiComedy",
-      "DesiMemes",
-      "DesiFunny",
-      "HindiFunny",
-      "DesiJugaad",
-      "DesiHumor",
-      "HaryanviComedy",
-      "AIFunny",
-      "DesiTips",
-      "ReelsIndia",
-      "TrendingReels",
-      "FeelItReelIt",
-      "ReelsKaroFeelKaro",
-      "ExplorePage",
-      "ViralReels",
-      "InstaTrending",
-      "Navratri2026",
-      "NavratriSpecial",
-      "FunnyReelsIndia",
-      "ComedyReels",
-      "Bakchodi",
-      "DesiTrend",
-      "TrendingNow",
-      "ReelsViral"
-    ],
-    "source": "web search"
-  },
-  "trend_styles": {
-    "date": "2026-10-11",
-    "styles": [
-      "Jab ... ne Haryanvi mein bolna shuru kiya: \"...\"",
-      "POV: Tera ... tujhe ... karte hue dekh raha hai \ud83d\ude2d",
-      "Bhai ... ne toh bilkul sach bol diya \ud83d\ude02",
-      "Wait for the end jab ... ne ... bol hi diya \ud83e\udd2f",
-      "POV: You are ... in India and ...",
-      "Send this to that friend who always ...",
-      "Me explaining to my ... why I need ...",
-      "Tell me you are desi without telling me ...",
-      "Nobody: ... | Absolutely nobody: ..."
-    ],
-    "source": "web search"
-  }
+  "in_flight": null
 }

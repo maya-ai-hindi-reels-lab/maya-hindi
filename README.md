@@ -329,6 +329,7 @@ Repo → **Settings → Secrets and variables → Actions**.
 | `SKIP_FOLDERS` | `posted,done,skip` | Subfolder names ignored by both dubbing and posting |
 | `TREND_TOPIC` | Hindi AI talking-object, desi funny and health tips reels | What trends to research |
 | `TREND_REGION` | `India` | Where trends are researched |
+| `BLOCKED_WORDS` | `haryanvi,haryana,हरियाणवी` | Hashtags and trending caption formats containing these words are never used |
 | `BUFFER` | `6` | Dubbed videos to keep ready |
 | `MAX_PER_RUN` | `4` | Max videos dubbed per night |
 | `GEMINI_MODEL` | `gemini-3.5-flash` | Gemini model for captions |
