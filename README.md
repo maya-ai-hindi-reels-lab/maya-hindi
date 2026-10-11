@@ -84,7 +84,7 @@ For each English video, Kaggle runs:
 | 5 | Translate | **Gemini** | Each sentence is translated **completely and exactly**, split into the same phrases as the original |
 | 6 | Verify | Gemini (2nd pass) | Each translation is checked against the English; anything missing or wrong is fixed |
 | 7 | Safety checks | Local + Gemini | Any English words in Latin letters are rewritten in Devanagari; any dialect words too heavy for the chosen style are replaced with Hindi |
-| 8 | Voice | **OmniVoice** (or Chatterbox / Seed-VC, see `VOICE_ENGINE`) | Each phrase is spoken in a **clone of the original speaker's voice**, cloned from their own sentence |
+| 8 | Voice | **OmniVoice** (or Chatterbox / Seed-VC, see `VOICE_ENGINE`) | Each phrase is spoken in a **clone of the original speaker's voice**, cloned from their own sentence (short sentences are joined with nearby sentences in a similar pitch for a steadier voice). A line whose voice jumps in pitch is re-spoken (`PITCH_GUARD`) |
 | 9 | Fit timing | see below | Each phrase is fitted into the original's time without overlaps |
 | 10 | Mix | **ffmpeg** | Hindi voice + original music (turned down, with ducking) → final MP4, original picture untouched |
 | 11 | Upload | Google Drive API (your account) | Video + `.txt` with the Hindi script go to "Maya Hindi dubbed" |
@@ -358,6 +358,8 @@ Same names and meaning as the Colab notebook. Edit on GitHub (file → ✏️ �
 | `GEMINI_MODEL` | `gemini-3.5-flash` | Model used for translation |
 | `VOICE_ENGINE` | `omnivoice` | `omnivoice` = clone the original voice directly (keeps an English accent) · `chatterbox` = Chatterbox Multilingual clone with accent reduction · `hindi_then_seedvc` = native Hindi voice, then Seed-VC changes it to the original speaker's voice (native pronunciation). Compare them in Colab first ([section 18](#18-the-colab-notebook)) |
 | `HINDI_VOICE` | `auto` | For `hindi_then_seedvc`: which native voice in `dubber/voices` speaks first. `auto` picks male/female from the original speaker's pitch |
+| `PITCH_GUARD` | `true` | Re-speak a line (up to 2 more takes) when its voice jumps away from the original speaker's pitch; keeps the closest take |
+| `PITCH_TOLERANCE` | `4.0` | How many semitones a line may differ from the original voice before it is re-spoken (smaller = stricter, slower) |
 
 Videos already dubbed are **not** re-dubbed after a settings change. To redo one, see [section 12](#12-common-tasks).
 
@@ -421,6 +423,7 @@ Between slots it just says `No slot due.`
 | ⏱️ | Used silence before/after to fit |
 | ✂️ rephrased to fit | Shortened with the same meaning (full version shown) |
 | ⏩ N× faster | Couldn't be shortened without losing meaning, so it's spoken faster |
+| 🎚️ | Voice jumped away from the original pitch; the line was spoken again and the closest take kept |
 | ✔️ | Corrected by the verification pass |
 | [Echo] | Original sound kept (laugh, "wow"…) |
 

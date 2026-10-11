@@ -15,5 +15,7 @@
   "DUCKING": true,
   "GEMINI_MODEL": "gemini-3.5-flash",
   "VOICE_ENGINE": "omnivoice",
-  "HINDI_VOICE": "auto"
+  "HINDI_VOICE": "auto",
+  "PITCH_GUARD": true,
+  "PITCH_TOLERANCE": 4.0
 }

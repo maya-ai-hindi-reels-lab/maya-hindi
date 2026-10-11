@@ -323,19 +323,58 @@ TRIM = ("silenceremove=start_periods=1:start_threshold=-45dB,areverse,"
         "silenceremove=start_periods=1:start_threshold=-45dB,areverse")
 SR = 44100
 
+def f0_median(y, sr):
+    """Median pitch (Hz) of the voiced parts of a signal; 0.0 if no voice is found."""
+    import librosa
+    if sr != 16000:
+        y = librosa.resample(np.asarray(y, dtype=np.float32), orig_sr=sr, target_sr=16000)
+    if len(y) < 1600:
+        return 0.0
+    f0, voiced, _ = librosa.pyin(y, fmin=60, fmax=800, sr=16000, frame_length=1024)
+    return float(np.nanmedian(f0[voiced])) if np.any(voiced) else 0.0
+
+_PITCH = {}
+def median_pitch(path, cache=True):
+    """f0_median of a wav file (cached per file version unless cache=False)."""
+    key = (path, os.path.getmtime(path))
+    if not cache or key not in _PITCH:
+        y, sr = sf.read(path)
+        _PITCH[key] = f0_median(y.mean(axis=1) if y.ndim > 1 else y, sr)
+    return _PITCH[key]
+
+def semitones(a, b):
+    return 12 * np.log2(a / b) if a > 0 and b > 0 else 0.0
+
 def voice_samples(work, vocals, phrases):
-    """One voice sample per sentence (its own audio, 3–10 s; short ones looped). Returns {sent: (path, text)}."""
+    """One voice sample per sentence, 3–10 s. A short sentence is extended with nearby sentences in a similar pitch
+    (most likely the same character) instead of being looped, so the cloned voice stays stable.
+    Returns ({sent: (path, text)}, vocals, sample rate)."""
     voc, vsr = sf.read(vocals)
     voc = voc.mean(axis=1) if voc.ndim > 1 else voc
-    refs = {}
-    for sent in sorted({p["sent"] for p in phrases}):
+    sents = sorted({p["sent"] for p in phrases})
+    span = {}
+    for sent in sents:
         ps = [p for p in phrases if p["sent"] == sent]
         a, b = ps[0]["start"], min(ps[-1]["end"], ps[0]["start"] + 10)
-        clip = voc[int(max(0, a - 0.05) * vsr): int((b + 0.05) * vsr)]
-        if len(clip) < int(0.3 * vsr):                    # too short to hold a voice: use the nearest 4 s of speech
-            c = int(a * vsr); clip = voc[max(0, c - 2 * vsr): c + 2 * vsr]
         text = " ".join(p["src"] for p in ps if p["end"] <= b + 0.01) or ps[0]["src"]
-        reps = int(np.ceil(4 * vsr / len(clip))) if 0 < len(clip) < 3 * vsr else 1
+        clip = voc[int(max(0, a - 0.05) * vsr): int((b + 0.05) * vsr)]
+        span[sent] = (a, b, text, clip, f0_median(clip, vsr))
+    refs, gap = {}, np.zeros(int(0.15 * vsr))
+    for k, sent in enumerate(sents):
+        own_pitch, use, length = span[sent][4], [sent], len(span[sent][3]) / vsr
+        neighbours = sorted((s for s in sents if s != sent), key=lambda s: abs(sents.index(s) - k))
+        for s in neighbours:
+            if length >= 3:
+                break
+            clip, pitch = span[s][3], span[s][4]
+            if own_pitch and pitch and abs(semitones(pitch, own_pitch)) <= 3 and length + len(clip) / vsr <= 10:
+                use.append(s); length += len(clip) / vsr
+        use.sort()
+        clip = np.concatenate([x for s in use for x in (span[s][3], gap)][:-1])
+        text = " ".join(span[s][2] for s in use)
+        if len(clip) < int(0.3 * vsr):                    # too short to hold a voice: use the nearest 4 s of speech
+            c = int(span[sent][0] * vsr); clip = voc[max(0, c - 2 * vsr): c + 2 * vsr]
+        reps = int(np.ceil(4 * vsr / len(clip))) if 0 < len(clip) < 3 * vsr else 1   # last resort: loop
         path = f"{work}/voice_{sent}.wav"; sf.write(path, np.tile(clip, reps), vsr)
         refs[sent] = (path, " ".join([text] * reps))
     return refs, voc, vsr
@@ -437,11 +476,8 @@ def hindi_reference(ref):
     choice = globals().get("HINDI_VOICE", "auto")
     if choice == "auto":
         if ref[0] not in _HINDI_REF:
-            import librosa
-            y, sr = librosa.load(ref[0], sr=16000)
-            f0, voiced, _ = librosa.pyin(y, fmin=60, fmax=500, sr=sr)
-            pitch = float(np.nanmedian(f0[voiced])) if np.any(voiced) else 0.0
-            _HINDI_REF[ref[0]] = "female" if pitch >= 165 else "male"
+            pitch = median_pitch(ref[0])
+            _HINDI_REF[ref[0]] ="female" if pitch >= 165 else "male"
             print(f"   🎙️ {os.path.basename(ref[0])}: median pitch {pitch:.0f} Hz → {_HINDI_REF[ref[0]]} Hindi voice")
         choice = _HINDI_REF[ref[0]]
     voices = json.load(open(f"{VOICES_DIR}/voices.json", encoding="utf-8"))
@@ -462,14 +498,34 @@ def speak(text, ref, duration=None):
     return speak_omnivoice(text, ref, duration)
 
 def voice_line(work, i, text, ref, duration=None):
-    """Speak one phrase, trim edge silence. Returns (wav path, seconds)."""
-    audio, sr = speak(text, ref, duration)
-    raw, trim = f"{work}/tts_{i}.wav", f"{work}/trim_{i}.wav"
-    sf.write(raw, audio, sr)
-    ffmpeg("-i", raw, "-af", TRIM, trim)
-    if sf.info(trim).duration < 0.15 <= sf.info(raw).duration:   # trimming removed (almost) everything: keep raw
-        shutil.copy(raw, trim)
-    return trim, sf.info(trim).duration
+    """Speak one phrase, trim edge silence. Returns (wav path, seconds).
+    PITCH_GUARD: if the line's pitch is more than PITCH_TOLERANCE semitones away from the original speaker (the voice
+    'jumped'), it is spoken again (up to 2 more times) and the take closest to the original pitch is kept."""
+    guard = globals().get("PITCH_GUARD", True)
+    tolerance = float(globals().get("PITCH_TOLERANCE", 4.0))
+    target = median_pitch(ref[0]) if guard else 0.0
+    takes = []
+    for attempt in range(3 if guard and target else 1):
+        if attempt:
+            import torch
+            torch.manual_seed(1000 * attempt + i)          # a different take
+        audio, sr = speak(text, ref, duration)
+        raw, trim = f"{work}/tts_{i}_{attempt}.wav", f"{work}/trim_{i}_{attempt}.wav"
+        sf.write(raw, audio, sr)
+        ffmpeg("-i", raw, "-af", TRIM, trim)
+        if sf.info(trim).duration < 0.15 <= sf.info(raw).duration:   # trimming removed (almost) everything: keep raw
+            shutil.copy(raw, trim)
+        off = semitones(median_pitch(trim, cache=False), target) if target else 0.0
+        takes.append((abs(off), attempt, trim))
+        if abs(off) <= tolerance:
+            break
+        print(f"   🎚️ line {i}: voice {off:+.1f} semitones off the original, speaking it again...")
+    off, attempt, best = min(takes)
+    if len(takes) > 1:
+        print(f"   🎚️ line {i}: kept take {attempt + 1} ({off:.1f} semitones off)")
+    final = f"{work}/trim_{i}.wav"
+    shutil.copy(best, final)
+    return final, sf.info(final).duration
 
 def plan_slots(phrases, lengths, total):
     """Decide where each phrase can go. Uses the silence AFTER a phrase first (until the next phrase starts),
