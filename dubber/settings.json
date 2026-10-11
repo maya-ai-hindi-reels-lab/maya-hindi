@@ -17,5 +17,9 @@
   "VOICE_ENGINE": "omnivoice",
   "HINDI_VOICE": "auto",
   "PITCH_GUARD": true,
-  "PITCH_TOLERANCE": 4.0
+  "PITCH_TOLERANCE": 4.0,
+  "REMIX_VIDEO": true,
+  "CROP_FRAME": true,
+  "BURN_CAPTIONS": true,
+  "HOOK_TEXT": true
 }

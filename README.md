@@ -86,8 +86,9 @@ For each English video, Kaggle runs:
 | 7 | Safety checks | Local + Gemini | Any English words in Latin letters are rewritten in Devanagari; any dialect words too heavy for the chosen style are replaced with Hindi |
 | 8 | Voice | **OmniVoice** (or Chatterbox / Seed-VC, see `VOICE_ENGINE`) | Each phrase is spoken in a **clone of the original speaker's voice**, cloned from their own sentence (short sentences are joined with nearby sentences in a similar pitch for a steadier voice). A line whose voice jumps in pitch is re-spoken (`PITCH_GUARD`) |
 | 9 | Fit timing | see below | Each phrase is fitted into the original's time without overlaps |
-| 10 | Mix | **ffmpeg** | Hindi voice + original music (turned down, with ducking) → final MP4, original picture untouched |
-| 11 | Upload | Google Drive API (your account) | Video + `.txt` with the Hindi script go to "Maya Hindi dubbed" |
+| 10 | Mix | **ffmpeg** | Hindi voice + original music (turned down, with ducking) |
+| 11 | Remix the picture | **ffmpeg** + Gemini | `REMIX_VIDEO`: the bundle's template (black frame + header text) is detected and cropped away, the picture fills 9:16, bold Hindi captions (timed to the Hindi voice) and a 1-second hook are burned in. Makes each reel look like a new video instead of the same clip other pages post. If anything goes wrong, the plain dubbed video is used |
+| 12 | Upload | Google Drive API (your account) | Video + `.txt` with the Hindi script go to "Maya Hindi dubbed" |
 
 ### Translation rules (what Gemini is told)
 
@@ -136,12 +137,12 @@ Runs every 30 minutes on GitHub (`instagram-autopost`). Each run:
    `DEFAULT_SLOTS` (13:00, 19:00, 21:30 India time). About 1 day in 5 it tests a new hour so it keeps learning.
 2. **Posts when a slot is due:** takes the next dubbed video (natural name order, so `(2)` comes before `(10)`).
 3. **Writes the caption with Gemini:** it looks at 8 frames of the video plus the Hindi script (`.txt`) and writes a
-   **trending-format title** (first line), a short caption ending with a question, and **up to 8 hashtags**, in
+   **search-friendly first line** (e.g. *Adrak wali chai ke fayde aur nuksan*), a trending-format line ending with a question, and **5 niche hashtags**, in
    **Hinglish** (Hindi in English letters mixed with English words) by default.
 4. **Uses today's trends:** once a day Gemini searches the web for trending Reels **hashtags** and **caption formats**
    in India for this niche. Only trends that genuinely fit the video are used.
 5. **Picks the cover:** Gemini picks the most eye-catching frame as the reel cover.
-6. **Publishes:** Instagram downloads the video straight from its Drive link (uploaded as-is, no re-encoding).
+6. **Publishes:** Instagram downloads the video straight from its Drive link (the posting side doesn't re-encode; the crop/captions were already done on Kaggle).
 7. **Learns:** 48 hours after each post, it saves the reel's stats to improve future posting times.
 
 **Duplicate and crash protection**
@@ -325,6 +326,7 @@ Repo → **Settings → Secrets and variables → Actions**.
 | `ACTIVE_START` / `ACTIVE_END` | `8` / `24` | Only post between these hours |
 | `MIN_GAP_HOURS` | `3` | Minimum hours between posts (≈ 16 ÷ posts per day) |
 | `CAPTION_LANGUAGE` | Hinglish (Hindi in English letters + English words) | Language/style of Instagram title, caption and hashtags (the dubbed audio stays Hindi) |
+| `MAX_HASHTAGS` | `5` | Hashtags per reel (niche ones; generic tags like #viral are avoided) |
 | `ALWAYS_HASHTAGS` | *(none)* | Tags forced onto every reel (e.g. `mayaai`) |
 | `SKIP_FOLDERS` | `posted,done,skip` | Subfolder names ignored by both dubbing and posting |
 | `TREND_TOPIC` | Hindi AI talking-object, desi funny and health tips reels | What trends to research |
@@ -361,6 +363,10 @@ Same names and meaning as the Colab notebook. Edit on GitHub (file → ✏️ �
 | `HINDI_VOICE` | `auto` | For `hindi_then_seedvc`: which native voice in `dubber/voices` speaks first. `auto` picks male/female from the original speaker's pitch |
 | `PITCH_GUARD` | `true` | Re-speak a line (up to 2 more takes) when its voice jumps away from the original speaker's pitch; keeps the closest take |
 | `PITCH_TOLERANCE` | `4.0` | How many semitones a line may differ from the original voice before it is re-spoken (smaller = stricter, slower) |
+| `REMIX_VIDEO` | `true` | Crop the template frame, fill 9:16, burn captions + hook (the three switches below). `false` = keep the original picture |
+| `CROP_FRAME` | `true` | Remove the bundle's black frame and header text. Only crops when a large, mostly dark static frame is found |
+| `BURN_CAPTIONS` | `true` | Bold Hindi captions of each dubbed line |
+| `HOOK_TEXT` | `true` | Gemini-written hook (max 24 characters) at the top for the first ~1.8 s |
 
 Videos already dubbed are **not** re-dubbed after a settings change. To redo one, see [section 12](#12-common-tasks).
 
@@ -426,6 +432,8 @@ Between slots it just says `No slot due.`
 | ⏩ N× faster | Couldn't be shortened without losing meaning, so it's spoken faster |
 | 🎚️ | Voice jumped away from the original pitch; the line was spoken again and the closest take kept |
 | ✔️ | Corrected by the verification pass |
+| 🖼️ | Template frame found and cropped away (size and position shown) |
+| 🪝 | The hook text burned in at the start |
 | [Echo] | Original sound kept (laugh, "wow"…) |
 
 ---

@@ -690,7 +690,7 @@ def dub(work, vocals, phrases, total):
         a = int(start * SR)
         b = min(a + len(y), int(latest_end * SR), len(track))   # never runs into the next phrase
         track[a:b] += y[: b - a]
-        p["pace"], p["placed_at"] = pace, start
+        p["pace"], p["placed_at"], p["spoken_end"] = pace, start, b / SR
 
         if pace <= 1.0:
             status = "✅ natural pace"
@@ -756,6 +756,195 @@ def mix(video, voice, bg, out, total):
                     errors.append(str(e))
     raise ToolError("Could not build the final video. ffmpeg errors:\n" + "\n---\n".join(errors[:3]))
 
+# ---- Remix: make the reel look like a new video (full-screen picture, Hindi captions, hook) ----
+# Bought bundle clips sit in a template (black frame + header text) that many pages post; Instagram limits reach for
+# such duplicates. REMIX_VIDEO crops back to the moving picture, fills 9:16, burns in the dubbed captions and a hook.
+
+FONT_URL = "https://github.com/notofonts/notofonts.github.io/raw/main/fonts/NotoSansDevanagari/hinted/ttf/NotoSansDevanagari-Bold.ttf"
+FONT_DIR = "/tmp/maya-fonts"
+FONT_NAME = "Noto Sans Devanagari"
+
+def video_size(path):
+    w, h = subprocess.check_output(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries",
+                                    "stream=width,height", "-of", "csv=p=0", path]).decode().strip().split(",")[:2]
+    return int(w), int(h)
+
+def detect_content_box(video, samples=24):
+    """The moving picture inside a static template (black bars, header text): (x, y, w, h) in source pixels.
+    None when there is no frame to remove or the detection isn't confident (then nothing is cropped)."""
+    W, H = video_size(video)
+    sw = 180; sh = max(2, int(round(H * sw / W / 2)) * 2)
+    total, frames = duration_of(video), []
+    for k in range(samples):
+        raw = subprocess.run(["ffmpeg", "-v", "error", "-ss", f"{total * (k + 0.5) / samples:.2f}", "-i", video,
+                              "-frames:v", "1", "-vf", f"scale={sw}:{sh},format=gray", "-f", "rawvideo", "-"],
+                             capture_output=True).stdout
+        if len(raw) == sw * sh:
+            frames.append(np.frombuffer(raw, np.uint8).reshape(sh, sw).astype(np.float32))
+    if len(frames) < 8:
+        return None
+    std = np.stack(frames).std(axis=0)                  # how much each pixel changes over time
+    rows, cols = std.mean(axis=1), std.mean(axis=0)
+    if np.percentile(std, 90) < 2:                      # nearly static video: can't tell frame from picture
+        return None
+    r = np.where(rows > 0.2 * np.percentile(rows, 90))[0]
+    c = np.where(cols > 0.2 * np.percentile(cols, 90))[0]
+    if not len(r) or not len(c):
+        return None
+    y0, y1, x0, x1 = r[0], r[-1] + 1, c[0], c[-1] + 1
+    fw, fh = (x1 - x0) / sw, (y1 - y0) / sh
+    if fw > 0.97 and fh > 0.97:                         # no template around the picture
+        return None
+    mask = np.ones_like(std, bool); mask[y0:y1, x0:x1] = False
+    if fw < 0.4 or fh < 0.3 or std[mask].mean() > 0.35 * std[~mask].mean():
+        return None                                     # not a clear static frame around a moving picture
+    # Only a real template counts: it takes up a good part of the frame and is mostly dark (black bars around the
+    # picture). A full-screen video whose edges just happen to be still is left alone.
+    still = np.median(np.stack(frames), axis=0)
+    if fw * fh > 0.85 or (still[mask] < 40).mean() < 0.5:
+        return None
+    # Parts of the picture that never move (a still background) look like frame: grow each side outward until the
+    # next line is mostly dark, i.e. the template's black border.
+    def dark(line):
+        return (line < 40).mean() >= 0.5
+    while y0 > 0 and not dark(still[y0 - 1, x0:x1]): y0 -= 1
+    while y1 < sh and not dark(still[y1, x0:x1]): y1 += 1
+    while x0 > 0 and not dark(still[y0:y1, x0 - 1]): x0 -= 1
+    while x1 < sw and not dark(still[y0:y1, x1]): x1 += 1
+    sx, sy = W / sw, H / sh
+    x, y = int(x0 * sx) + 2, int(y0 * sy) + 2           # 2 px inside, away from the frame's edge line
+    w, h = int((x1 - x0) * sx) - 4, int((y1 - y0) * sy) - 4
+    return x // 2 * 2, y // 2 * 2, w // 2 * 2, h // 2 * 2
+
+def fill_916(label_in, label_out, w, h):
+    """Filter that fills 1080x1920: crop to fill when the shape is close, else fit over a blurred copy."""
+    if 0.8 <= (w / h) / (9 / 16) <= 1.25:
+        return f"{label_in}scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,setsar=1{label_out}"
+    return (f"{label_in}split=2[bg][fg];[bg]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,"
+            f"boxblur=30:5[bgb];[fg]scale=1080:1920:force_original_aspect_ratio=decrease[fgs];"
+            f"[bgb][fgs]overlay=(W-w)/2:(H-h)/2,setsar=1{label_out}")
+
+def caption_font():
+    """Downloads the Devanagari font once; None if captions can't be rendered here."""
+    path = f"{FONT_DIR}/NotoSansDevanagari-Bold.ttf"
+    if not os.path.exists(path):
+        try:
+            import urllib.request
+            os.makedirs(FONT_DIR, exist_ok=True)
+            urllib.request.urlretrieve(FONT_URL, path)
+        except Exception as e:
+            print(f"⚠️ Caption font download failed ({e}); no captions.")
+            return None
+    filters = subprocess.run(["ffmpeg", "-hide_banner", "-filters"], capture_output=True, text=True).stdout
+    return FONT_DIR if " subtitles " in filters else None
+
+_HOOKS = {}
+def write_hook(phrases):
+    """Short on-screen hook for the first second, written from the dubbed script (cached per script)."""
+    script = " ".join(p.get("text") or "" for p in phrases).strip()
+    if not script:
+        return ""
+    if script not in _HOOKS:
+        script_rule = " in Devanagari script" if TARGET_LANGUAGE_CODE in DEVANAGARI else ""
+        try:
+            out = gemini_json(f"""Write ONE scroll-stopping on-screen hook for the first second of this {TARGET_LANGUAGE} reel,
+spoken by the talking object(s) in it. At most 24 characters, in {TARGET_LANGUAGE}{script_rule}, no emoji, no hashtags.
+Make viewers curious or feel something (a warning, a surprising truth), and say only what the script supports.
+Return ONLY a JSON array: [{{"hook": "<hook>"}}]
+Script: {script}""")
+            hook = str((out or [{}])[0].get("hook", "")).strip()
+        except (Exception, SystemExit) as e:
+            print(f"⚠️ No hook text ({e})")
+            hook = ""
+        if banned_in(hook) or len(hook) > 40:
+            hook = ""
+        _HOOKS[script] = hook
+    return _HOOKS[script]
+
+def ass_time(t):
+    t = max(0.0, t)
+    return f"{int(t // 3600)}:{int(t % 3600 // 60):02d}:{t % 60:05.2f}"
+
+def write_ass(path, phrases, hook, total):
+    """Bold captions for each dubbed line (timed to the Hindi voice) + hook at the top for the first ~1.8 s."""
+    def clean(text):
+        return (text or "").replace("{", "(").replace("}", ")").replace("\n", " ").strip()
+    events = []
+    if globals().get("BURN_CAPTIONS", True):
+        lines = sorted((p for p in phrases if p.get("text") and not p.get("keep_original") and p.get("spoken_end")),
+                       key=lambda p: p["placed_at"])
+        for k, p in enumerate(lines):
+            end = min(p["spoken_end"] + 0.15, total)
+            if k + 1 < len(lines):
+                end = min(end, lines[k + 1]["placed_at"] - 0.02)   # never on screen together with the next line
+            events.append(f"Dialogue: 0,{ass_time(p['placed_at'])},{ass_time(max(end, p['placed_at'] + 0.3))},"
+                          f"Caption,,0,0,0,,{clean(p['text'])}")
+    if hook:
+        events.append(f"Dialogue: 1,{ass_time(0)},{ass_time(min(1.8, total))},Hook,,0,0,0,,{clean(hook)}")
+    if not events:
+        return None
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(f"""[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Caption,{FONT_NAME},70,&H00FFFFFF,&H00FFFFFF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,6,2,2,90,90,620,1
+Style: Hook,{FONT_NAME},88,&H0000E5FF,&H0000E5FF,&H50000000,&H50000000,-1,0,0,0,100,100,0,0,3,20,0,8,80,80,280,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+""" + "\n".join(events) + "\n")
+    return path
+
+def remix_video(src, out, work, phrases, total):
+    """Crop the template away, fill 9:16, burn captions + hook. Audio is copied unchanged."""
+    W, H = video_size(src)
+    box = detect_content_box(src) if globals().get("CROP_FRAME", True) else None
+    x, y, w, h = box or (0, 0, W, H)
+    if box:
+        print(f"🖼️ Template frame removed: keeping {w}x{h} at ({x},{y}) of {W}x{H}")
+    reshape = bool(box) or abs(W / H - 9 / 16) > 0.01
+    fonts, ass = caption_font(), None
+    if fonts:
+        hook = write_hook(phrases) if globals().get("HOOK_TEXT", True) else ""
+        if hook:
+            print(f"🪝 Hook: {hook}")
+        ass = write_ass(f"{work}/captions.ass", phrases, hook, total)
+    if not reshape and not ass:
+        shutil.copy(src, out)
+        return
+    crop = f"crop={w}:{h}:{x}:{y}," if box else ""
+    base = fill_916(f"[0:v]{crop}", "[base]", w, h) if reshape else "[0:v]null[base]"
+    encode = ["-map", "0:a?", "-c:v", "libx264", "-preset", "medium", "-crf", "19", "-pix_fmt", "yuv420p",
+              "-c:a", "copy", "-movflags", "+faststart"]
+    if ass:
+        try:
+            ffmpeg("-i", src, "-filter_complex", f"{base};[base]subtitles=filename={ass}:fontsdir={fonts}[v]",
+                   "-map", "[v]", *encode, out)
+            return
+        except ToolError as e:
+            print(f"⚠️ Captions couldn't be burned in ({str(e)[-300:]}); keeping the crop only.")
+    ffmpeg("-i", src, "-filter_complex", base, "-map", "[base]", *encode, out)
+
+def finish_video(work, video, voice, bg, phrases, total, out):
+    """Mix the dubbed voice with the music, then (REMIX_VIDEO) crop + captions + hook. Never fails because of the remix."""
+    if not globals().get("REMIX_VIDEO", True):
+        mix(video, voice, bg, out, total)
+        return out
+    mixed = f"{work}/mixed.mp4"
+    mix(video, voice, bg, mixed, total)
+    try:
+        remix_video(mixed, out, work, phrases, total)
+    except Exception as e:
+        print(f"⚠️ Remix failed, using the dubbed video without crop/captions: {e}")
+        shutil.copy(mixed, out)
+    return out
+
 def dub_file(video, work):
     """Headless version of run_translation(): one video in, dubbed MP4 out. Returns (out_path, phrases)."""
     os.makedirs(work, exist_ok=True)
@@ -774,5 +963,5 @@ def dub_file(video, work):
     phrases = translate_phrases(phrases, lang)
     voice = dub(work, vocals, phrases, total)
     out = f"{work}/dubbed.mp4"
-    mix(local, voice, bg, out, total)
+    finish_video(work, local, voice, bg, phrases, total, out)
     return out, phrases

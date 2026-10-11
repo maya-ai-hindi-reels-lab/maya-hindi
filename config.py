@@ -58,7 +58,7 @@ CAPTION_LANGUAGE = _env("CAPTION_LANGUAGE",
                         "the way young Indians type on Instagram. Casual and catchy, no Devanagari script.")
 # Tags added to every reel (before the AI's tags); total capped at MAX_HASHTAGS
 ALWAYS_HASHTAGS = [h.strip().lstrip("#") for h in _env("ALWAYS_HASHTAGS").replace(" ", ",").split(",") if h.strip().lstrip("#")]
-MAX_HASHTAGS = int(_env("MAX_HASHTAGS", "8"))
+MAX_HASHTAGS = int(_env("MAX_HASHTAGS", "5"))
 # Daily trending-hashtag research via Gemini + Google Search (falls back to model knowledge)
 TREND_TOPIC = _env("TREND_TOPIC", "Hindi AI videos of talking objects, desi funny and health tips reels")
 TREND_REGION = _env("TREND_REGION", "India")

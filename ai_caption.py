@@ -18,9 +18,9 @@ The images are {n} frames from ONE video, in time order (Frame 0 to Frame {last}
 Return ONLY a JSON object:
 {{
   "cover_frame": <index of the most eye-catching frame: sharp, well lit, expressive face or the key moment>,
-  "title": "<the caption's first line, max 70 characters: a scroll-stopping hook built on one of today's trending formats, adapted to what happens in this video. Only if none of them can fit, write an original hook in the style of those trends. May include 1 emoji.>",
-  "caption": "<1-2 short lines after the title that add context or a punchline, ending with a question or call to action that invites comments>",
-  "hashtags": ["<exactly 8 hashtags without #: take as many as possible from today's trending list, but ONLY ones that genuinely match this video's content (an unrelated trending tag sends the reel to the wrong audience); fill the rest with specific tags for what is in the video>"]
+  "title": "<the caption's first line, max 70 characters, written for Instagram search: start with the words people would search for this video's topic (e.g. 'Adrak wali chai ke fayde aur nuksan', 'Green tea peene ke fayde'), then a short hook. May include 1 emoji.>",
+  "caption": "<1-2 short lines after the title: a scroll-stopping line built on one of today's trending formats (adapted to this video), ending with a question that invites comments or a reason to save the reel>",
+  "hashtags": ["<exactly {n_tags} specific niche hashtags without #, e.g. the topic, talking objects, health tips: prefer ones from today's trending list ONLY if they genuinely match this video's content (an unrelated trending tag sends the reel to the wrong audience); no generic tags like aivideo, viral, reels>"]
 }}
 Rules: describe only what is actually in this video. Adapt trending formats to this video; never copy another creator's caption word for word. Language: {lang}."""
 
@@ -57,7 +57,7 @@ def _prompt(frames, notes, trending, trend_tags=None, styles=None):
         trend_block = "Top-performing captions in this niche right now (reference only):\n" + \
                       "\n".join(f"- {c}" for c in trending[:12])
     return PROMPT.format(
-        n=len(frames), last=len(frames) - 1, lang=config.CAPTION_LANGUAGE,
+        n=len(frames), last=len(frames) - 1, lang=config.CAPTION_LANGUAGE, n_tags=config.MAX_HASHTAGS,
         notes=f"Creator notes about this video: {notes}" if notes else "",
         trends=trend_block,
         styles=("Caption/title formats trending on Reels today (templates; adapt, don't copy):\n"
