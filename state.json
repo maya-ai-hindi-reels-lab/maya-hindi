@@ -602,7 +602,15 @@
       "posted_at": "2026-10-09T11:17:24.190619+05:30",
       "local_hour": 11,
       "caption": "POV: Tum fitness par gyaan de rahe ho aur ye bol uthe: \ud83d\udc80\nCigarette, daru aur vape sab milkar tumhari body ki vaat lagane ko taiyar hain! Inme se kis aadat ko aaj hi chhodoge? Comment karke batao \ud83d\udc47\n\n#aitalkingvideo #objecttalkingai #aiviralvideos #bolnewali_ai #trendingreels #instagramreels #funnyreels #aihindistories",
-      "metrics": null
+      "metrics": {
+        "views": 0,
+        "reach": 0,
+        "likes": 0,
+        "comments": 0,
+        "shares": 0,
+        "saved": 0,
+        "total_interactions": 0
+      }
     },
     {
       "file_id": "1zzNZ_oxvTzCf4z3L6SA3DlNuBAHXjXKE",
@@ -653,6 +661,16 @@
       "local_hour": 8,
       "caption": "Jab healthy seeds ne Haryanvi mein bolna shuru kiya \ud83d\ude02\nChips chhod ke in super seeds ko diet mein add karo, body hamesha fit rahegi \ud83d\udcaf\nAap daily konsa seed khate ho? Comment karke batao! \ud83d\udc47\n\n#AIVideo #AIGenerated #TalkingObject #DesiComedy #HaryanviReels #DesiTips #AIFunny #ReelsIndia",
       "metrics": null
+    },
+    {
+      "file_id": "11n1WoJ6YIbvjcwdOBc9gzPHl-hImvfAl",
+      "name": "200 - NEW VIDS (40).mp4",
+      "md5": "9120182bf205922ce98debaf683c0dbe",
+      "media_id": "17996993808011114",
+      "posted_at": "2026-10-11T11:48:34.658903+05:30",
+      "local_hour": 11,
+      "caption": "Jab pani ki bottle ne Haryanvi mein bolna shuru kiya \ud83d\ude2d\nPani ki bottle bas khangal ke peene wale dosto ko tag karo jaldi! \ud83e\udd22\nAap apni bottle roz dhote ho ya 2 hafte tak chalata hai? Comment me batao! \ud83d\udc47\n\n#AIVideo #AIGenerated #HaryanviMemes #DesiComedy #TalkingObject #HindiAI #TrendingReels #ReelsIndia",
+      "metrics": null
     }
   ],
   "failed": {},
@@ -664,7 +682,8 @@
   ],
   "plan_date": "2026-10-11",
   "done_slots": [
-    "2026-10-11T08:18:00+05:30"
+    "2026-10-11T08:18:00+05:30",
+    "2026-10-11T11:15:00+05:30"
   ],
   "in_flight": null,
   "trend_tags": {
