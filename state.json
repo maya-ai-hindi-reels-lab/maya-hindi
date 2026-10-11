@@ -620,7 +620,15 @@
       "posted_at": "2026-10-09T20:20:58.429890+05:30",
       "local_hour": 20,
       "caption": "Mushroom be like: 'Arey bhai, tight kachha mat pehno!' \ud83d\ude02\nFunny tarike se sabse important grooming tips! \ud83e\udd2b Tight underwear aur galat shaving methods se rash aur skin irritation pakka hai. Kya aap in baaton se agree karte ho? Comment mein batao \ud83d\udc47\n\n#talkingfood #aitalkingvideo #objecttalkingai #aiviralvideos #aicomedy #desicomedy #funnyreels #comedyreels",
-      "metrics": null
+      "metrics": {
+        "views": 0,
+        "reach": 0,
+        "likes": 0,
+        "comments": 0,
+        "shares": 0,
+        "saved": 0,
+        "total_interactions": 0
+      }
     },
     {
       "file_id": "1gAMRkvOTOmKu0V-MctrqOd8sqRl9Rl5D",
@@ -721,6 +729,17 @@
       "local_hour": 17,
       "caption": "Food facts aur health tips jo aap nahi jaante \ud83e\udd66\nPOV: Agar aapki kitchen ki sabziyan bol sakti, toh yeh zaroor bolti! Kaunsa hack sabse best laga? Comments mein batao aur save karlo \ud83d\udccc\n\n#healthtipsinhindi #desihealthtips #gharelunuskhe #sehat #talkingobject",
       "metrics": null
+    },
+    {
+      "file_id": "1p93lGopR7NkwfUh-f4Yp6o8T3W2_i-wB",
+      "name": "200 - NEW VIDS (41).mp4",
+      "md5": "3d94fd0c22e58f2565088405ed2ba718",
+      "media_id": "18122245606820117",
+      "posted_at": "2026-10-11T20:44:10.712845+05:30",
+      "local_hour": 20,
+      "caption": "Bathroom cleaning tips: Agar aapka bathroom bol pata \ud83e\uddfc\nPOV: Jab aapka bathroom aapki hygiene ki reality check deta hai \ud83d\ude02 Aap sabse badi galti kaun si karte ho?\n\n#talkingobject #hindiAI #aicomedy #funnyreelsindia #aianimation",
+      "metrics": null,
+      "trial": null
     }
   ],
   "failed": {},
@@ -733,7 +752,8 @@
   "plan_date": "2026-10-11",
   "done_slots": [
     "2026-10-11T08:18:00+05:30",
-    "2026-10-11T11:15:00+05:30"
+    "2026-10-11T11:15:00+05:30",
+    "2026-10-11T20:17:00+05:30"
   ],
   "in_flight": null,
   "trend_tags": {
@@ -789,5 +809,6 @@
       "Nobody: ... | Me after ...: ..."
     ],
     "source": "web search"
-  }
+  },
+  "trial_reels_off_until": "2026-10-18"
 }
