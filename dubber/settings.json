@@ -21,5 +21,6 @@
   "REMIX_VIDEO": true,
   "CROP_FRAME": true,
   "BURN_CAPTIONS": true,
-  "HOOK_TEXT": true
+  "HOOK_TEXT": true,
+  "END_TEXT": true
 }

@@ -50,6 +50,7 @@ jobs:
           ALWAYS_HASHTAGS: ${{ vars.ALWAYS_HASHTAGS }}
           TREND_TOPIC: ${{ vars.TREND_TOPIC || 'Hindi AI videos of talking objects, desi funny and health tips reels' }}
           TREND_REGION: ${{ vars.TREND_REGION || 'India' }}
+          TRIAL_REELS: ${{ vars.TRIAL_REELS }}
           POST_NOW: ${{ inputs.post_now }}
       - name: Save state (retries so a push conflict can't lose the posted list)
         if: always()

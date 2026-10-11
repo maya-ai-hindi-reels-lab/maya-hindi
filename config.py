@@ -74,6 +74,9 @@ def blocked(text):
 # --- Upload method ---
 # url       = Instagram downloads the original file from a public Drive link (Instagram Login; default)
 # resumable = file is uploaded from the runner (requires Facebook Login token; needed for PROCESS_VIDEO)
+# Trial Reels: shown to non-followers first. SS_PERFORMANCE = Instagram moves it to your followers if it does well,
+# MANUAL = you move it in the app, off = normal reels. Accounts without access fall back to normal reels automatically.
+TRIAL_REELS = _env("TRIAL_REELS", "SS_PERFORMANCE").upper()
 UPLOAD_MODE = _env("UPLOAD_MODE", "url")
 VIDEO_URL_TEMPLATE = _env("VIDEO_URL_TEMPLATE",
                           "https://drive.usercontent.google.com/download?id={id}&export=download&confirm=t")

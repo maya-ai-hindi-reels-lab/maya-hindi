@@ -156,14 +156,39 @@ def build_reel(video, captions, trending, tmp, trend_tags=None, styles=None):
     return out, package["caption"], package["cover_time"] * 1000
 
 
+def trial_strategy(state):
+    """Trial Reel setting for this post, or None (off, or the account had no access in the last 7 days)."""
+    if config.TRIAL_REELS not in ("MANUAL", "SS_PERFORMANCE"):
+        return None
+    if (state.get("trial_reels_off_until") or "") > datetime.now(config.LOCAL_TZ).date().isoformat():
+        return None
+    return config.TRIAL_REELS
+
+
 def publish(state, video, path, caption, cover_ms):
+    trial = trial_strategy(state)
+
+    def create(trial):
+        if config.UPLOAD_MODE == "url":
+            return ig.create_container(caption, cover_ms, video_url=url, trial=trial)
+        cid = ig.create_container(caption, cover_ms, trial=trial)
+        ig.upload_video(cid, path)
+        return cid
+
     if config.UPLOAD_MODE == "url":
         url = config.VIDEO_URL_TEMPLATE.format(id=video["id"])
         ig.check_public_url(url)
-        container_id = ig.create_container(caption, cover_ms, video_url=url)
-    else:
-        container_id = ig.create_container(caption, cover_ms)
-        ig.upload_video(container_id, path)
+    try:
+        container_id = create(trial)
+    except RuntimeError as e:
+        if not trial:
+            raise
+        container_id = create(None)                 # raises again if the problem wasn't the trial option
+        retry = (datetime.now(config.LOCAL_TZ) + timedelta(days=7)).date().isoformat()
+        state["trial_reels_off_until"] = retry
+        trial = None
+        log(f"Trial Reels not available for this account yet ({str(e)[:200]}); posted as a normal reel. "
+            f"Will try again from {retry}.")
     ig.wait_until_ready(container_id)
 
     # Save the in-flight record BEFORE publishing, so a crash right after publish is recoverable
@@ -172,6 +197,7 @@ def publish(state, video, path, caption, cover_ms):
 
     media_id = ig.publish_container(container_id)
     record_post(state, video, media_id, caption)
+    state["posts"][-1]["trial"] = trial
     state["in_flight"] = None
     save_state(state)
     return media_id

@@ -1,5 +1,6 @@
 """Instagram API: publish reels (in two phases so crashes can't cause double posts),
 read quota, audience activity and reel insights."""
+import json
 import os
 import time
 from collections import defaultdict
@@ -33,9 +34,12 @@ def publishing_quota_left():
 
 # ---------- Phase 1: container + upload + processing ----------
 
-def create_container(caption, thumb_offset_ms=None, video_url=None):
-    """video_url set -> Instagram fetches the file itself; otherwise a resumable session is opened."""
+def create_container(caption, thumb_offset_ms=None, video_url=None, trial=None):
+    """video_url set -> Instagram fetches the file itself; otherwise a resumable session is opened.
+    trial = "MANUAL" / "SS_PERFORMANCE" posts it as a Trial Reel (shown to non-followers first)."""
     params = dict(media_type="REELS", caption=caption, share_to_feed="true")
+    if trial:
+        params["trial_params"] = json.dumps({"graduation_strategy": trial})
     if video_url:
         params["video_url"] = video_url
     else:

@@ -838,35 +838,42 @@ def caption_font():
     filters = subprocess.run(["ffmpeg", "-hide_banner", "-filters"], capture_output=True, text=True).stdout
     return FONT_DIR if " subtitles " in filters else None
 
-_HOOKS = {}
-def write_hook(phrases):
-    """Short on-screen hook for the first second, written from the dubbed script (cached per script)."""
+_SCREEN_TEXT = {}
+def screen_texts(phrases):
+    """On-screen texts written from the dubbed script (cached per script): a hook for the first second and a closing
+    line for the end (a question that invites comments or a reason to save). Returns {"hook": ..., "ending": ...}."""
     script = " ".join(p.get("text") or "" for p in phrases).strip()
     if not script:
-        return ""
-    if script not in _HOOKS:
+        return {"hook": "", "ending": ""}
+    if script not in _SCREEN_TEXT:
         script_rule = " in Devanagari script" if TARGET_LANGUAGE_CODE in DEVANAGARI else ""
         try:
-            out = gemini_json(f"""Write ONE scroll-stopping on-screen hook for the first second of this {TARGET_LANGUAGE} reel,
-spoken by the talking object(s) in it. At most 24 characters, in {TARGET_LANGUAGE}{script_rule}, no emoji, no hashtags.
-Make viewers curious or feel something (a warning, a surprising truth), and say only what the script supports.
-Return ONLY a JSON array: [{{"hook": "<hook>"}}]
+            out = gemini_json(f"""Write two short on-screen texts for this {TARGET_LANGUAGE} reel about talking objects, in
+{TARGET_LANGUAGE}{script_rule}, no emoji, no hashtags, saying only what the script supports:
+- "hook": shown in the first second, at most 24 characters, spoken by the object: make viewers curious or feel something
+  (a warning, a surprising truth).
+- "ending": shown in the last 2 seconds, at most 40 characters: a question that makes viewers comment (e.g. which one
+  they need most) or a reason to save the reel.
+Return ONLY a JSON array: [{{"hook": "<hook>", "ending": "<ending>"}}]
 Script: {script}""")
-            hook = str((out or [{}])[0].get("hook", "")).strip()
+            item = (out or [{}])[0]
+            texts = {"hook": str(item.get("hook", "")).strip(), "ending": str(item.get("ending", "")).strip()}
         except (Exception, SystemExit) as e:
-            print(f"⚠️ No hook text ({e})")
-            hook = ""
-        if banned_in(hook) or len(hook) > 40:
-            hook = ""
-        _HOOKS[script] = hook
-    return _HOOKS[script]
+            print(f"⚠️ No on-screen texts ({e})")
+            texts = {"hook": "", "ending": ""}
+        for key, limit in (("hook", 40), ("ending", 60)):
+            if banned_in(texts[key]) or len(texts[key]) > limit:
+                texts[key] = ""
+        _SCREEN_TEXT[script] = texts
+    return _SCREEN_TEXT[script]
 
 def ass_time(t):
     t = max(0.0, t)
     return f"{int(t // 3600)}:{int(t % 3600 // 60):02d}:{t % 60:05.2f}"
 
-def write_ass(path, phrases, hook, total):
-    """Bold captions for each dubbed line (timed to the Hindi voice) + hook at the top for the first ~1.8 s."""
+def write_ass(path, phrases, hook, total, ending=""):
+    """Bold captions for each dubbed line (timed to the Hindi voice), hook at the top for the first ~1.8 s,
+    closing question in the middle for the last ~2.5 s."""
     def clean(text):
         return (text or "").replace("{", "(").replace("}", ")").replace("\n", " ").strip()
     events = []
@@ -881,6 +888,8 @@ def write_ass(path, phrases, hook, total):
                           f"Caption,,0,0,0,,{clean(p['text'])}")
     if hook:
         events.append(f"Dialogue: 1,{ass_time(0)},{ass_time(min(1.8, total))},Hook,,0,0,0,,{clean(hook)}")
+    if ending and total > 6:
+        events.append(f"Dialogue: 1,{ass_time(total - 2.5)},{ass_time(total)},End,,0,0,0,,{clean(ending)}")
     if not events:
         return None
     with open(path, "w", encoding="utf-8") as f:
@@ -895,6 +904,7 @@ ScaledBorderAndShadow: yes
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
 Style: Caption,{FONT_NAME},70,&H00FFFFFF,&H00FFFFFF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,6,2,2,90,90,620,1
 Style: Hook,{FONT_NAME},88,&H0000E5FF,&H0000E5FF,&H50000000,&H50000000,-1,0,0,0,100,100,0,0,3,20,0,8,80,80,280,1
+Style: End,{FONT_NAME},76,&H00FFFFFF,&H00FFFFFF,&H50000000,&H50000000,-1,0,0,0,100,100,0,0,3,20,0,5,90,90,0,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
@@ -911,10 +921,14 @@ def remix_video(src, out, work, phrases, total):
     reshape = bool(box) or abs(W / H - 9 / 16) > 0.01
     fonts, ass = caption_font(), None
     if fonts:
-        hook = write_hook(phrases) if globals().get("HOOK_TEXT", True) else ""
+        texts = screen_texts(phrases) if (globals().get("HOOK_TEXT", True) or globals().get("END_TEXT", True)) else {}
+        hook = texts.get("hook", "") if globals().get("HOOK_TEXT", True) else ""
+        ending = texts.get("ending", "") if globals().get("END_TEXT", True) else ""
         if hook:
             print(f"🪝 Hook: {hook}")
-        ass = write_ass(f"{work}/captions.ass", phrases, hook, total)
+        if ending:
+            print(f"🔚 Ending: {ending}")
+        ass = write_ass(f"{work}/captions.ass", phrases, hook, total, ending)
     if not reshape and not ass:
         shutil.copy(src, out)
         return

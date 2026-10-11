@@ -326,6 +326,7 @@ Repo → **Settings → Secrets and variables → Actions**.
 | `ACTIVE_START` / `ACTIVE_END` | `8` / `24` | Only post between these hours |
 | `MIN_GAP_HOURS` | `3` | Minimum hours between posts (≈ 16 ÷ posts per day) |
 | `CAPTION_LANGUAGE` | Hinglish (Hindi in English letters + English words) | Language/style of Instagram title, caption and hashtags (the dubbed audio stays Hindi) |
+| `TRIAL_REELS` | `SS_PERFORMANCE` | Post as Trial Reels (shown to non-followers first; Instagram moves good ones to followers). `MANUAL` = you move them in the app, `off` = normal reels. If the account has no access yet (Instagram reportedly needs ~1,000 followers), it posts normally and tries again after 7 days |
 | `MAX_HASHTAGS` | `5` | Hashtags per reel (niche ones; generic tags like #viral are avoided) |
 | `ALWAYS_HASHTAGS` | *(none)* | Tags forced onto every reel (e.g. `mayaai`) |
 | `SKIP_FOLDERS` | `posted,done,skip` | Subfolder names ignored by both dubbing and posting |
@@ -367,6 +368,7 @@ Same names and meaning as the Colab notebook. Edit on GitHub (file → ✏️ �
 | `CROP_FRAME` | `true` | Remove the bundle's black frame and header text. Only crops when a large, mostly dark static frame is found |
 | `BURN_CAPTIONS` | `true` | Bold Hindi captions of each dubbed line |
 | `HOOK_TEXT` | `true` | Gemini-written hook (max 24 characters) at the top for the first ~1.8 s |
+| `END_TEXT` | `true` | Closing question (comment / save prompt, max 40 characters) in the last ~2.5 s |
 
 Videos already dubbed are **not** re-dubbed after a settings change. To redo one, see [section 12](#12-common-tasks).
 
@@ -434,6 +436,7 @@ Between slots it just says `No slot due.`
 | ✔️ | Corrected by the verification pass |
 | 🖼️ | Template frame found and cropped away (size and position shown) |
 | 🪝 | The hook text burned in at the start |
+| 🔚 | The closing question burned in at the end |
 | [Echo] | Original sound kept (laugh, "wow"…) |
 
 ---
