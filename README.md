@@ -1,7 +1,7 @@
 # Maya Hindi: Automatic Dubbing & Instagram Posting
 
 Fully automatic pipeline that takes the English "talking object" videos of **Maya AI** (@maya.ai.reels), dubs them into
-**Hindi with a light Haryanvi touch** in the **original speaker's cloned voice**, and posts them to a separate Hindi
+**pure Hindi** in the **original speaker's cloned voice**, and posts them to a separate Hindi
 Instagram account: **3 reels a day, at the best times for an Indian audience, with trending Hindi captions**.
 
 Everything runs on **free services**: GitHub Actions, Kaggle (free GPU), Google Drive and the Instagram API. The only
@@ -95,9 +95,9 @@ For each English video, Kaggle runs:
   dropped, shortened or added.
 - **Natural spoken style:** everyday words people actually say; common English words (lips, nails, perfume, subscribe,
   brand names) stay English but are written in Devanagari (लिप्स, नेल्स).
-- **Hindi with a light Haryanvi touch** (default): standard Hindi grammar (मैं…हूँ, मुझे, तुम्हें, है, नहीं); the Haryanvi
-  feel comes from a direct, desi, confident tone and at most one common word like घणा or थारा. Heavy dialect is banned
-  (मन्ने, तने, सूं, सै, कोनी, ढाळ, काढण…) and a safety check replaces it if it slips through.
+- **Pure Hindi** (default, `TARGET_LANGUAGE_CODE` = `hi`): standard everyday Hindi grammar and words (मैं…हूँ, मुझे,
+  तुम्हें, तुम्हारा, है, नहीं, बहुत). No dialect: Haryanvi and other dialect words (घणा, थारा, म्हारा, सै, मन्ने, कोनी…) are
+  banned and a safety check replaces them if one slips through. (Set `bgc` to bring back a Haryanvi style.)
 - **Confident tone:** "may / might / can / try" become sure statements and direct instructions
   (e.g. *"घनी दिखने लगेंगी"*, not *"शायद घनी दिख सकती हैं"*). Warnings and safety advice keep their caution.
 - **Consistent address:** the viewer is addressed the same way throughout.
@@ -327,7 +327,7 @@ Repo → **Settings → Secrets and variables → Actions**.
 | `CAPTION_LANGUAGE` | Hinglish (Hindi in English letters + English words) | Language/style of Instagram title, caption and hashtags (the dubbed audio stays Hindi) |
 | `ALWAYS_HASHTAGS` | *(none)* | Tags forced onto every reel (e.g. `mayaai`) |
 | `SKIP_FOLDERS` | `posted,done,skip` | Subfolder names ignored by both dubbing and posting |
-| `TREND_TOPIC` | Hindi/Haryanvi AI talking-object reels | What trends to research |
+| `TREND_TOPIC` | Hindi AI talking-object, desi funny and health tips reels | What trends to research |
 | `TREND_REGION` | `India` | Where trends are researched |
 | `BUFFER` | `6` | Dubbed videos to keep ready |
 | `MAX_PER_RUN` | `4` | Max videos dubbed per night |
@@ -341,8 +341,8 @@ Same names and meaning as the Colab notebook. Edit on GitHub (file → ✏️ �
 
 | Setting | Current | Options / meaning |
 |---|---|---|
-| `TARGET_LANGUAGE_CODE` | `bgc` | `bgc` = Haryanvi options below; `hi` = plain Hindi; also `bn`, `mr`, `gu`, `pa`, `ur`, `ta`, `te`, `kn`, `ml` |
-| `HARYANVI_STYLE` | `Hindi with light Haryanvi touch` | `Hindi with light Haryanvi touch` · `Hindi with Haryanvi flavour` · `Full Haryanvi` |
+| `TARGET_LANGUAGE_CODE` | `hi` | `hi` = pure Hindi; `bgc` = Haryanvi options below; also `bn`, `mr`, `gu`, `pa`, `ur`, `ta`, `te`, `kn`, `ml` |
+| `HARYANVI_STYLE` | *(unused with `hi`)* | Only for `bgc`: `Hindi with light Haryanvi touch` · `Hindi with Haryanvi flavour` · `Full Haryanvi` |
 | `TRANSLATION_STYLE` | `Natural spoken` | `Natural spoken` (everyday words) · `Formal` |
 | `CONFIDENT_TONE` | `true` | Sure statements and direct instructions; no शायद / हो सकता है |
 | `ECHO_TARGET_LANGUAGE` | `true` | Keep parts already spoken in the target language (sounds are always kept) |
@@ -398,7 +398,7 @@ emails for failures.
 ===== 200/NEW VIDS (13).mp4 =====
 ✂️ Round 1: 2 phrase(s) too long even using the silence around them; rephrasing with the same meaning...
 [Source (en)   0.0–  1.1s] I'm ginger tea.
-[Translation (bgc)] मैं अदरक की चाय हूँ।   ✅ natural pace
+[Translation (hi)] मैं अदरक की चाय हूँ।   ✅ natural pace
   ⏱️ uses 0.1s of the silence after
 ✅ Uploaded: 200 - NEW VIDS (13).mp4
 [Done] 3 dubbed, 0 failed.
@@ -556,7 +556,7 @@ git push
 
 `colab/dub_test.ipynb` runs the dubbing pipeline on **one video** in Colab. It downloads `dubber/core.py` from this repo,
 so it is exactly the code the nightly Kaggle run uses. Use it to:
-- **test translation settings** (language, Haryanvi level, style, tone, context) before changing `dubber/settings.json`;
+- **test translation settings** (language, style, tone, context) before changing `dubber/settings.json`;
 - **preview** the full dub and fix individual lines with `EDITS`;
 - **adjust the music** instantly with the remix step.
 

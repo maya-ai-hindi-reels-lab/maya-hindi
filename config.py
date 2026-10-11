@@ -60,7 +60,7 @@ CAPTION_LANGUAGE = _env("CAPTION_LANGUAGE",
 ALWAYS_HASHTAGS = [h.strip().lstrip("#") for h in _env("ALWAYS_HASHTAGS").replace(" ", ",").split(",") if h.strip().lstrip("#")]
 MAX_HASHTAGS = int(_env("MAX_HASHTAGS", "8"))
 # Daily trending-hashtag research via Gemini + Google Search (falls back to model knowledge)
-TREND_TOPIC = _env("TREND_TOPIC", "Hindi and Haryanvi AI videos of talking objects, desi funny and tips reels")
+TREND_TOPIC = _env("TREND_TOPIC", "Hindi AI videos of talking objects, desi funny and health tips reels")
 TREND_REGION = _env("TREND_REGION", "India")
 TREND_SEARCH = _env("TREND_SEARCH", "true").lower() == "true"
 NICHE_HASHTAGS = [h.strip().lstrip("#") for h in _env("NICHE_HASHTAGS").split(",") if h.strip()]

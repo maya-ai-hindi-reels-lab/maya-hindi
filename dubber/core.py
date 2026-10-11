@@ -171,6 +171,11 @@ def rules(source_lang: str) -> str:
                  "Example: 'Your lips will look soft and pink.' → GOOD: 'थारे लिप्स घणे सॉफ्ट और गुलाबी दिखेंगे।' "
                  "TOO HEAVY: 'थारे लिप्स कती मुलायम अर गुलाबी दिखण लाग ज्यांगे।' "
                  "Keep it natural and respectful, never exaggerated or mocking. " + keep_words)
+    elif TARGET_LANGUAGE_CODE == "hi" and TRANSLATION_STYLE != "Formal":
+        style = ("Write pure, standard everyday spoken HINDI (Devanagari) that any Hindi speaker in India understands "
+                 "instantly, with standard grammar, pronouns and verb forms (मैं…हूँ, मुझे, तुम्हें, तुम्हारा, है, नहीं). "
+                 "Never use Haryanvi, Rajasthani, Bhojpuri or other dialect words such as घणा, थारा, म्हारा, सै, मन्ने, तने, "
+                 "कोनी, इब: use बहुत, तुम्हारा, हमारा, है, मुझे, तुम्हें, नहीं, अब. " + keep_words)
     elif TRANSLATION_STYLE == "Formal":
         style = f"Use correct, proper {TARGET_LANGUAGE} vocabulary; keep only brand names in their original form."
     else:
@@ -223,16 +228,22 @@ BANNED_WORDS = {
                                                           "लागैगी", "रहवैगी", "करै", "दूँ हूँ", "करूँ हूँ"],
     "Hindi with Haryanvi flavour": HEAVY_HARYANVI + ["मन्ने", "तने", "थमने"],
 }
+# Pure Hindi (TARGET_LANGUAGE_CODE "hi"): no dialect words at all ("जमा" is normal Hindi, so it is allowed)
+PURE_HINDI_BANNED = [w for w in BANNED_WORDS["Hindi with light Haryanvi touch"] if w != "जमा"] + [
+    "घणा", "घणी", "घणे", "थारा", "थारी", "थारे", "म्हारा", "म्हारी", "म्हारे", "इब"]
 
 _PUNCT = re.compile(r"[।,!?.;:()\"'-]")
 
 def banned_in(text):
-    words = BANNED_WORDS.get(HARYANVI_STYLE, []) if TARGET_LANGUAGE_CODE == "bgc" else []
+    if TARGET_LANGUAGE_CODE == "hi":
+        words = PURE_HINDI_BANNED
+    else:
+        words = BANNED_WORDS.get(HARYANVI_STYLE, []) if TARGET_LANGUAGE_CODE == "bgc" else []
     padded = " " + " ".join(_PUNCT.sub(" ", text or "").split()) + " "
     return [w for w in words if " " + w + " " in padded]
 
 def fix_dialect(phrases, idxs):
-    """Safety net: replace dialect words that are too heavy for the chosen Haryanvi level (no other changes)."""
+    """Safety net: replace dialect words not allowed for the chosen language/style (no other changes)."""
     bad = {i: banned_in(phrases[i].get("text")) for i in idxs}
     bad = {i: w for i, w in bad.items() if w}
     if not bad:

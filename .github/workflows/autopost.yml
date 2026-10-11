@@ -48,7 +48,7 @@ jobs:
           CAPTION_LANGUAGE: ${{ vars.CAPTION_LANGUAGE || 'Hinglish - Hindi written in English (Roman) letters mixed with common English words, the way young Indians type on Instagram. Casual and catchy, no Devanagari script.' }}
           DEFAULT_CAPTION: ${{ vars.DEFAULT_CAPTION }}
           ALWAYS_HASHTAGS: ${{ vars.ALWAYS_HASHTAGS }}
-          TREND_TOPIC: ${{ vars.TREND_TOPIC || 'Hindi and Haryanvi AI videos of talking objects, desi funny and tips reels' }}
+          TREND_TOPIC: ${{ vars.TREND_TOPIC || 'Hindi AI videos of talking objects, desi funny and health tips reels' }}
           TREND_REGION: ${{ vars.TREND_REGION || 'India' }}
           POST_NOW: ${{ inputs.post_now }}
       - name: Save state (retries so a push conflict can't lose the posted list)
