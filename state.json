@@ -751,6 +751,17 @@
       "caption": "Kon si chai kab peeni chahiye \u2615 Herbal tea benefits\nSecret health hack nobody told you: Har problem ke liye ek perfect herbal chai! Aapki favorite chai konsi hai? Save this for later!\n\n#HealthTipsHindi #GharKeNuskhe #AyurvedaTips #HealthyIndia #HealthReels",
       "metrics": null,
       "trial": null
+    },
+    {
+      "file_id": "1Ke0wJIw33h4i_pMgifxcOx54sImuv2vx",
+      "name": "200 - NEW VIDS (43).mp4",
+      "md5": "e07a4da860527d90340c43639490233d",
+      "media_id": "17965113530981219",
+      "posted_at": "2026-10-12T11:19:34.217715+05:30",
+      "local_hour": 11,
+      "caption": "Daant dard ke gharelu nuskhe aur hacks \ud83e\uddb7\nPOV: Jab aapke kitchen ke items khud health tips dene lage! Inme se kaunsa nuskha aap try karoge? Save kar lo!\n\n#GharKeNuskhe #HealthTipsHindi #AyurvedaTips #TalkingObject #HindiAI",
+      "metrics": null,
+      "trial": null
     }
   ],
   "failed": {},
@@ -762,7 +773,8 @@
   ],
   "plan_date": "2026-10-12",
   "done_slots": [
-    "2026-10-12T08:03:00+05:30"
+    "2026-10-12T08:03:00+05:30",
+    "2026-10-12T11:03:00+05:30"
   ],
   "in_flight": null,
   "trend_tags": {
