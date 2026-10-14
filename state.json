@@ -776,7 +776,15 @@
       "posted_at": "2026-10-12T11:19:34.217715+05:30",
       "local_hour": 11,
       "caption": "Daant dard ke gharelu nuskhe aur hacks \ud83e\uddb7\nPOV: Jab aapke kitchen ke items khud health tips dene lage! Inme se kaunsa nuskha aap try karoge? Save kar lo!\n\n#GharKeNuskhe #HealthTipsHindi #AyurvedaTips #TalkingObject #HindiAI",
-      "metrics": null,
+      "metrics": {
+        "views": 146,
+        "reach": 133,
+        "likes": 2,
+        "comments": 0,
+        "shares": 3,
+        "saved": 3,
+        "total_interactions": 8
+      },
       "trial": null
     },
     {
@@ -833,6 +841,17 @@
       "caption": "Laung khane ke fayde aur gharelu upchar \ud83c\udf3f\nAgar aapko bhi dant dard ya infection hota hai, toh yeh 1 desi ilaj try karo \ud83d\udcaf Aap laung ka use kis problem ke liye karte ho? Comment karo! \ud83d\udc47\n\n#healthtips #ghareluupchar #funnyhealthtips #talkingobjects #aihindicomedy",
       "metrics": null,
       "trial": null
+    },
+    {
+      "file_id": "1RWYFLsZ4JQVzYJqbdPiNJQ1MjsM0LiDC",
+      "name": "200 - NEW VIDS (49).mp4",
+      "md5": "32a292557e4ff9f3f2e524d4f27ec9a6",
+      "media_id": "17875176069588315",
+      "posted_at": "2026-10-14T11:29:51.498398+05:30",
+      "local_hour": 11,
+      "caption": "Konsi herbal tea kab peeni chahiye? \u2615\nJab aapki chai aapse khud baatein karne lage aur health tips de! \ud83d\ude2d\ud83d\udc47 Aap daily konsi chai peete ho?\n\n#healthtips #ghareluupchar #talkingobjects #aianimation #hindiaivideo",
+      "metrics": null,
+      "trial": null
     }
   ],
   "failed": {},
@@ -844,7 +863,8 @@
   ],
   "plan_date": "2026-10-14",
   "done_slots": [
-    "2026-10-14T08:14:00+05:30"
+    "2026-10-14T08:14:00+05:30",
+    "2026-10-14T11:08:00+05:30"
   ],
   "in_flight": null,
   "trend_tags": {
