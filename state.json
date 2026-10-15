@@ -833,7 +833,15 @@
       "posted_at": "2026-10-13T11:52:41.790870+05:30",
       "local_hour": 11,
       "caption": "Skincare Mistakes Aur Acne Avoid Tips \ud83d\udea8 Stop doing this!\nAgar aapka face aur makeup tools aapse bol pate toh yahi kehte \ud83d\ude2d Inme se konsi galti aap roz karte ho? Comment mein batao!\n\n#HealthTipsHindi #TalkingObjects #HindiAI #HealthGyan #RelatableMemes",
-      "metrics": null,
+      "metrics": {
+        "views": 157,
+        "reach": 137,
+        "likes": 1,
+        "comments": 0,
+        "shares": 0,
+        "saved": 0,
+        "total_interactions": 1
+      },
       "trial": null
     },
     {
@@ -890,6 +898,17 @@
       "caption": "Belly fat kam karne ke tips: Liver detox fat loss hacks \ud83d\udca1\nPOV: Tumhara liver bata raha hai ki diet karne par bhi weight loss kyun nahi ho raha! \ud83d\uded1 Kya aapne kabhi yeh nuskhe try kiye hain?\n\n#HealthTipsHindi #SwasthyaTips #HealthGyan #GharKeNuskhe #TalkingObjects",
       "metrics": null,
       "trial": null
+    },
+    {
+      "file_id": "1qlQk0khwAMO7SoT3ihQ1EbEtf9WcK-pT",
+      "name": "200 - NEW VIDS (52).mp4",
+      "md5": "759a42354609dea444063f530a05134a",
+      "media_id": "18387504193237522",
+      "posted_at": "2026-10-15T12:01:50.514499+05:30",
+      "local_hour": 12,
+      "caption": "Spine health and back pain mistakes \ud83d\ude31\nPOV: Tumhari spine tumse keh rahi hai ki phone chalate waqt aur drive karte waqt jhukna band karo! Aap inme se kaunsi galti roj karte ho?\n\n#HealthTipsHindi #TalkingObjects #HealthGyan #SwasthyaTips #AIAnimation",
+      "metrics": null,
+      "trial": null
     }
   ],
   "failed": {},
@@ -901,7 +920,8 @@
   ],
   "plan_date": "2026-10-15",
   "done_slots": [
-    "2026-10-15T08:04:00+05:30"
+    "2026-10-15T08:04:00+05:30",
+    "2026-10-15T11:15:00+05:30"
   ],
   "in_flight": null,
   "trend_tags": {
