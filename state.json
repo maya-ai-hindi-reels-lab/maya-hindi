@@ -909,7 +909,15 @@
       "posted_at": "2026-10-14T17:05:17.621450+05:30",
       "local_hour": 17,
       "caption": "Anar ke fayde: Jab Anar khud health tips dene lage \ud83c\udf4e\nJab Anar aapse baatein karke apne sabse bade health benefits bataye \ud83d\ude2d\ud83d\udc47 Aap roz anar ka juice peete ho ya nahi? Comment karke batao! \ud83d\udccc\n\n#healthtips #ghareluupchar #talkingobjects #funnyhealthtips #hindiaivideo",
-      "metrics": null,
+      "metrics": {
+        "views": 13,
+        "reach": 11,
+        "likes": 1,
+        "comments": 0,
+        "shares": 0,
+        "saved": 0,
+        "total_interactions": 1
+      },
       "trial": null
     },
     {
@@ -966,6 +974,17 @@
       "caption": "Types of drinks meme: Alcohol after effects \ud83c\udf7a\nShare this with that friend who texts their ex after 2 drinks every single time \ud83d\ude02 Inme se aapki go-to drink kaunsi hai? Comments me batao!\n\n#HindiAIVideos #AIMemes #HindiComedy #DesiHumor #DesiComedy",
       "metrics": null,
       "trial": null
+    },
+    {
+      "file_id": "1S33xDLGf5tLebc_5FFZzEkcXEBAEHhvu",
+      "name": "200 - NEW VIDS (56).mp4",
+      "md5": "2ee945f5e798b2c63aaeeffb0a640c1a",
+      "media_id": "17869077432662540",
+      "posted_at": "2026-10-16T18:01:23.627692+05:30",
+      "local_hour": 18,
+      "caption": "Skincare mistakes Hindi: Ye 4 galtiya aapki skin kharab kar sakti hain \ud83d\ude31\nStop doing these daily skincare mistakes if you want clear skin \u26a0\ufe0f Inme se aap kaunsi galti har baar karte ho? Comments me batao \ud83d\udc47\n\n#TalkingObjects #HealthTipsHindi #DesiHealthTips #HindiAIVideos #AIMemes",
+      "metrics": null,
+      "trial": null
     }
   ],
   "failed": {},
@@ -978,7 +997,8 @@
   "plan_date": "2026-10-16",
   "done_slots": [
     "2026-10-16T08:03:00+05:30",
-    "2026-10-16T11:02:00+05:30"
+    "2026-10-16T11:02:00+05:30",
+    "2026-10-16T17:11:00+05:30"
   ],
   "in_flight": null,
   "trend_tags": {
