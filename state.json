@@ -947,7 +947,15 @@
       "posted_at": "2026-10-15T12:01:50.514499+05:30",
       "local_hour": 12,
       "caption": "Spine health and back pain mistakes \ud83d\ude31\nPOV: Tumhari spine tumse keh rahi hai ki phone chalate waqt aur drive karte waqt jhukna band karo! Aap inme se kaunsi galti roj karte ho?\n\n#HealthTipsHindi #TalkingObjects #HealthGyan #SwasthyaTips #AIAnimation",
-      "metrics": null,
+      "metrics": {
+        "views": 127,
+        "reach": 115,
+        "likes": 1,
+        "comments": 0,
+        "shares": 2,
+        "saved": 0,
+        "total_interactions": 3
+      },
       "trial": null
     },
     {
