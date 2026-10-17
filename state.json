@@ -966,7 +966,15 @@
       "posted_at": "2026-10-15T17:30:37.350985+05:30",
       "local_hour": 17,
       "caption": "Kitchen Hacks Hindi: Secret life of kitchen items \ud83c\udf73\nPOV: Tumhare kitchen ke items tumse apne raaz share kar rahe hain! \ud83d\udca1 Kaunsa kitchen hack sabse kaam ka laga? Comments mein batao!\n\n#TalkingObjects #GharKeNuskhe #DesiFunny #FunnyAIVideo #AIAnimation",
-      "metrics": null,
+      "metrics": {
+        "views": 121,
+        "reach": 105,
+        "likes": 0,
+        "comments": 0,
+        "shares": 0,
+        "saved": 0,
+        "total_interactions": 0
+      },
       "trial": null
     },
     {
