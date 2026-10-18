@@ -1004,7 +1004,15 @@
       "posted_at": "2026-10-16T11:28:58.194223+05:30",
       "local_hour": 11,
       "caption": "Types of drinks meme: Alcohol after effects \ud83c\udf7a\nShare this with that friend who texts their ex after 2 drinks every single time \ud83d\ude02 Inme se aapki go-to drink kaunsi hai? Comments me batao!\n\n#HindiAIVideos #AIMemes #HindiComedy #DesiHumor #DesiComedy",
-      "metrics": null,
+      "metrics": {
+        "views": 13,
+        "reach": 11,
+        "likes": 1,
+        "comments": 0,
+        "shares": 0,
+        "saved": 0,
+        "total_interactions": 1
+      },
       "trial": null
     },
     {
