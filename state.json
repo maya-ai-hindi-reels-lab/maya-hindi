@@ -1080,7 +1080,15 @@
       "posted_at": "2026-10-17T17:23:52.228093+05:30",
       "local_hour": 17,
       "caption": "Alcohol hangover cure tips: Sharab ke sath ye dawai mat lena \u274c\nStop scrolling if you take paracetamol or ibuprofen after drinking \ud83d\uded1 Ye 1 galti aapke liver aur stomach ko tabah kar sakti hai! Save this reel before your next party \ud83c\udf89\n\n#HealthTipsInHindi #TalkingObject #SehatKiBaat #DesiGyan #AIComedy",
-      "metrics": null,
+      "metrics": {
+        "views": 110,
+        "reach": 103,
+        "likes": 1,
+        "comments": 0,
+        "shares": 0,
+        "saved": 1,
+        "total_interactions": 2
+      },
       "trial": null
     },
     {
@@ -1137,6 +1145,17 @@
       "caption": "Car driving mistakes to avoid \ud83d\ude97 Stop ruining your car!\nIf your car parts could talk: \"Bhai hume thoda baksh do!\" \ud83d\ude02 Which bad driving habit are you most guilty of?\n\n#HindiAIVideo #TalkingObjects #HindiMemes #DesiComedy #DesiHumor",
       "metrics": null,
       "trial": null
+    },
+    {
+      "file_id": "1xVdZWpznGaU4GqaOWYcysQQFe_4UHG7V",
+      "name": "200 - NEW VIDS (65).mp4",
+      "md5": "a38487f2ad0301f7ca5d4b6e71a95fb8",
+      "media_id": "17949488700084759",
+      "posted_at": "2026-10-19T17:34:49.884970+05:30",
+      "local_hour": 17,
+      "caption": "Dog ko kya nahi khilana chahiye: Toxic foods for dogs \ud83d\udc36\nIf dangerous foods could talk: \"Bhai, apne dog ko humse door rakho!\" \ud83d\udeab\ud83d\udc36\nIsme se kaunsi cheez aapka dog maangta hai? Save and share with pet owners!\n\n#TalkingObjects #HindiAIVideo #HindiFunny #DesiHumor #HealthTipsHindi",
+      "metrics": null,
+      "trial": null
     }
   ],
   "failed": {},
@@ -1149,7 +1168,8 @@
   "plan_date": "2026-10-19",
   "done_slots": [
     "2026-10-19T12:18:00+05:30",
-    "2026-10-19T15:03:00+05:30"
+    "2026-10-19T15:03:00+05:30",
+    "2026-10-19T17:06:00+05:30"
   ],
   "in_flight": null,
   "trend_tags": {
