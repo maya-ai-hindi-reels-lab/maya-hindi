@@ -1137,7 +1137,15 @@
       "posted_at": "2026-10-18T17:23:41.557895+05:30",
       "local_hour": 17,
       "caption": "Underwear discharge color guide men health tips \u26a0\ufe0f\nUnderwear me alag alag color ka discharge dekh kar ignore mat karo \u274c Ye simple hygiene se lekar infection tak ka signal ho sakta hai. Kya aapko in sab ke matlab pata the? Drop in comments!\n\n#HealthTipsHindi #HealthGyan #SehatKiBaat #TalkingObjects #DesiHumor",
-      "metrics": null,
+      "metrics": {
+        "views": 107,
+        "reach": 97,
+        "likes": 1,
+        "comments": 0,
+        "shares": 0,
+        "saved": 0,
+        "total_interactions": 1
+      },
       "trial": null
     },
     {
@@ -1194,6 +1202,17 @@
       "caption": "Cooking Mistakes To Avoid Jab Aap Khana Banate Ho \ud83c\udf73\nAgar aapke kitchen ke khane me jaan hoti toh wo yahi bolta \ud83d\ude2d Khaana banate waqt aap konsi mistake karte ho? Save this for your next meal!\n\n#talkingobjects #aicomedy #aianimation #desifunny #hindicomedy",
       "metrics": null,
       "trial": null
+    },
+    {
+      "file_id": "18eUsiBtNLf82ZEg5Wsmxeffq51gOS7n0",
+      "name": "200 - NEW VIDS (68).mp4",
+      "md5": "6ae59ded94ebc9268e094c05e23a4b90",
+      "media_id": "18091651268214770",
+      "posted_at": "2026-10-20T18:01:23.568738+05:30",
+      "local_hour": 18,
+      "caption": "Kapde ke daag hatane ke hacks: Aasan gharelu nuskhe \ud83e\uddfa\nAgar kapdo ke daag me jaan hoti toh wo yahi bolte! \ud83d\ude2d Save this reel before you ruin your favorite shirt! \ud83d\udccc\n\n#talkingobjects #gharelunuskhe #desinuskhe #aicomedy #desifunny",
+      "metrics": null,
+      "trial": null
     }
   ],
   "failed": {},
@@ -1206,7 +1225,8 @@
   "plan_date": "2026-10-20",
   "done_slots": [
     "2026-10-20T08:12:00+05:30",
-    "2026-10-20T12:09:00+05:30"
+    "2026-10-20T12:09:00+05:30",
+    "2026-10-20T17:17:00+05:30"
   ],
   "in_flight": null,
   "trend_tags": {
