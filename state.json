@@ -1175,7 +1175,15 @@
       "posted_at": "2026-10-19T15:37:38.081523+05:30",
       "local_hour": 15,
       "caption": "Car driving mistakes to avoid \ud83d\ude97 Stop ruining your car!\nIf your car parts could talk: \"Bhai hume thoda baksh do!\" \ud83d\ude02 Which bad driving habit are you most guilty of?\n\n#HindiAIVideo #TalkingObjects #HindiMemes #DesiComedy #DesiHumor",
-      "metrics": null,
+      "metrics": {
+        "views": 2,
+        "reach": 1,
+        "likes": 1,
+        "comments": 0,
+        "shares": 0,
+        "saved": 0,
+        "total_interactions": 1
+      },
       "trial": null
     },
     {
@@ -1232,6 +1240,17 @@
       "caption": "Intimate hygiene mistakes to avoid \ud83d\uded1 Body care tips\nPOV: Jab aapka underwear aur towel aapse baat karne lage! Kon konsi galti aap abhi tak kar rahe the? Comments mein batao \ud83d\udc47\n\n#healthtipsinhindi #healthtips #talkingobjects #hindiAI #sehat",
       "metrics": null,
       "trial": null
+    },
+    {
+      "file_id": "1RbnAqF0xlnLNkX_NUHpltTtYgluFcFf4",
+      "name": "200 - NEW VIDS (70).mp4",
+      "md5": "017139b58760ab1c4f4b31391158f440",
+      "media_id": "18133917466670634",
+      "posted_at": "2026-10-21T16:33:09.407920+05:30",
+      "local_hour": 16,
+      "caption": "Pimple aur skin problem se kaise bache \ud83d\ude31\nPOV: Jab aapki skin problems aapse khud baat karne lage! \ud83d\ude05 Inme se sabse zyada pareshan kaun karta hai aapko? Comment mein batao!\n\n#talkingobjects #aigenerated #healthtipsinhindi #healthtips #desihumor",
+      "metrics": null,
+      "trial": null
     }
   ],
   "failed": {},
@@ -1243,7 +1262,8 @@
   ],
   "plan_date": "2026-10-21",
   "done_slots": [
-    "2026-10-21T12:00:00+05:30"
+    "2026-10-21T12:00:00+05:30",
+    "2026-10-21T16:01:00+05:30"
   ],
   "in_flight": null,
   "trend_tags": {
