@@ -1251,7 +1251,15 @@
       "posted_at": "2026-10-20T18:01:23.568738+05:30",
       "local_hour": 18,
       "caption": "Kapde ke daag hatane ke hacks: Aasan gharelu nuskhe \ud83e\uddfa\nAgar kapdo ke daag me jaan hoti toh wo yahi bolte! \ud83d\ude2d Save this reel before you ruin your favorite shirt! \ud83d\udccc\n\n#talkingobjects #gharelunuskhe #desinuskhe #aicomedy #desifunny",
-      "metrics": null,
+      "metrics": {
+        "views": 118,
+        "reach": 106,
+        "likes": 0,
+        "comments": 0,
+        "shares": 0,
+        "saved": 0,
+        "total_interactions": 0
+      },
       "trial": null
     },
     {
