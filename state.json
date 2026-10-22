@@ -1232,7 +1232,15 @@
       "posted_at": "2026-10-20T13:08:48.545302+05:30",
       "local_hour": 13,
       "caption": "Cooking Mistakes To Avoid Jab Aap Khana Banate Ho \ud83c\udf73\nAgar aapke kitchen ke khane me jaan hoti toh wo yahi bolta \ud83d\ude2d Khaana banate waqt aap konsi mistake karte ho? Save this for your next meal!\n\n#talkingobjects #aicomedy #aianimation #desifunny #hindicomedy",
-      "metrics": null,
+      "metrics": {
+        "views": 120,
+        "reach": 105,
+        "likes": 0,
+        "comments": 0,
+        "shares": 0,
+        "saved": 1,
+        "total_interactions": 1
+      },
       "trial": null
     },
     {
