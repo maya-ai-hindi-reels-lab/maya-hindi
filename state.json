@@ -1308,7 +1308,15 @@
       "posted_at": "2026-10-21T17:32:26.575236+05:30",
       "local_hour": 17,
       "caption": "Gut health tips: Bad gas smell se kaise bache \ud83e\udd22\nPOV: Jab aapka gut aapko warning dene lage \ud83d\ude37 Tag karo us dost ko jinki gas ki badbu se sab bhag jate hain!\n\n#healthtipsinhindi #ghareluupchar #sehat #healthtips #desifunny",
-      "metrics": null,
+      "metrics": {
+        "views": 150,
+        "reach": 136,
+        "likes": 2,
+        "comments": 0,
+        "shares": 0,
+        "saved": 0,
+        "total_interactions": 2
+      },
       "trial": null
     }
   ],
@@ -1322,7 +1330,8 @@
   "plan_date": "2026-10-23",
   "done_slots": [
     "2026-10-23T08:04:00+05:30",
-    "2026-10-23T12:00:00+05:30"
+    "2026-10-23T12:00:00+05:30",
+    "2026-10-23T17:08:00+05:30"
   ],
   "in_flight": null,
   "trend_tags": {
